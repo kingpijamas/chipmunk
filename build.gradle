@@ -13,6 +13,7 @@ apply plugin: 'scala'
 apply plugin: 'eclipse'
 apply plugin: 'application'
 apply plugin: 'scalaStyle'
+apply plugin: 'maven-publish'
 
 repositories {
 	mavenLocal()
@@ -20,7 +21,7 @@ repositories {
 	maven { url 'http://repo.typesafe.com/typesafe/releases' }
 }
 
-version = '1.0'
+version = '0.1'
 mainClassName = '' //ugly, but hey, this is a library after all!
 
 ext {
@@ -61,4 +62,22 @@ scalaStyle {
 	includeTestSourceDirectory = true
 	source = "src/main/scala"
 	testSource = "src/test/scala"
+}
+
+task sourceJar(type: Jar) {
+	from sourceSets.main.allJava
+	from sourceSets.main.allScala
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			groupId 'org.chipmunk'
+			artifactId 'chipmunk'
+			
+			from components.java
+
+			artifact sourceJar { classifier "sources" }
+		}
+	}
 }
