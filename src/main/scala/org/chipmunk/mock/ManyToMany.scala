@@ -15,13 +15,13 @@ object ManyToMany {
     outerId: Id,
     owningSide: Boolean,
     values: (O, A)*): SManyToMany[O, A] =
-    new ManyToMany[O](outerId, owningSide, mutable.Set() ++= values)
+    new ManyToMany[O](outerId, owningSide, mutable.Map() ++= values)
 }
 
 private class ManyToMany[O <: Identifiable](
   outerId: Id,
   owningSide: Boolean,
-  values: mutable.Set[(O, A)])
+  values: mutable.Map[O, A])
     extends Query[O] with SManyToMany[O, A] {
 
   def iterable: Iterable[O] = values map { _._1 }
@@ -53,7 +53,15 @@ private class ManyToMany[O <: Identifiable](
     def iterable: Iterable[A] = values map { _._2 }
   }
 
-  def dissociate(o: O): Boolean = ???
+  def dissociate(o: O): Boolean = {
+    val found = values.contains(o)
+    values -= o
+    found
+  }
 
-  def dissociateAll: Int = ???
+  def dissociateAll: Int = {
+    val formerSize = values.size
+    values.clear()
+    formerSize
+  }
 }

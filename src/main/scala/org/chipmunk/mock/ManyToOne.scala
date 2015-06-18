@@ -18,5 +18,9 @@ private class ManyToOne[O <: Identifiable](var value: Option[O])
     one
   }
 
-  def delete: Boolean = ???
+  def delete: Boolean = {
+    val hadContents = !value.isEmpty
+    this.value = None
+    hadContents
+  }
 }
