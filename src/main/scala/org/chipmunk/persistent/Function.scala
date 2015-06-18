@@ -2,11 +2,11 @@ package org.chipmunk.persistent
 
 import org.squeryl.annotations.Transient
 
-abstract class PersistentFunction[T <: PersistentFunction[T, F], F](val pClass: PersistentClass)
-    extends PersistentEntity[T] {
+abstract class Function[T <: Function[T, F], F](val pType: Type)
+    extends Entity[T] {
   self: T =>
 
-  def this(fClass: Class[_ <: F]) = this(new PersistentClass(fClass))
+  def this(fClass: Class[_ <: F]) = this(new Type(fClass))
 
   @Transient // java annotation
   @transient
@@ -16,7 +16,7 @@ abstract class PersistentFunction[T <: PersistentFunction[T, F], F](val pClass: 
   def getF(): F = _f
 
   private def instanceF(): F = {
-    val clazz = pClass.asClass
+    val clazz = pType.asClass
     val constructor = clazz.getConstructor()
     val innerCondAsObject = constructor.newInstance()
 

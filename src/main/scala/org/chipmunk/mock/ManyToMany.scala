@@ -1,22 +1,22 @@
 package org.chipmunk.mock
 
 import scala.collection.mutable
-
 import org.chipmunk.BinaryAssociation
-import org.chipmunk.mock.MockManyToMany.A
-import org.chipmunk.persistent.Identifiable
-import org.squeryl.Query
-import org.squeryl.dsl.ManyToMany
+import org.chipmunk.mock.ManyToMany.A
+import org.squeryl.{ Query => SQuery }
+import org.squeryl.dsl.{ ManyToMany => SManyToMany }
+import org.chipmunk.Identifiable
 
-object MockManyToMany {
-  private[MockManyToMany]type A = BinaryAssociation
+object ManyToMany {
+  private[ManyToMany]type A = BinaryAssociation
 }
 
-class MockManyToMany[O <: Identifiable](
+class ManyToMany[O <: Identifiable](
   val owningSide: Boolean,
   val outerIdGetter: Unit => Long,
   val values: mutable.Set[(O, A)] = mutable.Set[(O, A)]())
-    extends MockQuery[O] with ManyToMany[O, A] {
+    extends Query[O]
+    with SManyToMany[O, A] {
 
   def iterable: Iterable[O] = values map { _._1 }
 
@@ -41,11 +41,11 @@ class MockManyToMany[O <: Identifiable](
 
   def associate(o: O, a: A): A = { assign(o, a) }
 
-  def associationMap: Query[(O, A)] = new MockQuery[(O, A)] {
+  def associationMap: Query[(O, A)] = new Query[(O, A)] {
     def iterable: Iterable[(O, A)] = values
   }
 
-  def associations: Query[A] = new MockQuery[A] {
+  def associations: Query[A] = new Query[A] {
     def iterable: Iterable[A] = values map { _._2 }
   }
 

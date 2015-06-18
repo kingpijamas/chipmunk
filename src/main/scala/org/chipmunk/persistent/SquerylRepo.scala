@@ -1,13 +1,12 @@
-package org.chipmunk.ddd
+package org.chipmunk.persistent
 
-import org.chipmunk.persistent.PersistentEntity
 import org.squeryl.PrimitiveTypeMode.__thisDsl
 import org.squeryl.PrimitiveTypeMode.from
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.where
 import org.squeryl.Table
 
-abstract class SquerylRepo[T <: PersistentEntity[T]] extends Repository[T] {
+abstract class SquerylRepo[T <: Entity[T]] extends Repository[T] {
   protected def table: Table[T]
 
   def get(id: Long): Iterable[T] = {

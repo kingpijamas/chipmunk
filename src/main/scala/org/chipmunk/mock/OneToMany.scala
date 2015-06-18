@@ -4,10 +4,11 @@ import scala.annotation.implicitNotFound
 import scala.collection.mutable
 
 import org.squeryl.KeyedEntity
-import org.squeryl.dsl.OneToMany
+import org.squeryl.dsl.{ OneToMany => SOneToMany }
 
-class MockOneToMany[M](val values: mutable.Set[M] = mutable.Set[M]())
-    extends MockQuery[M] with OneToMany[M] {
+class OneToMany[M](val values: mutable.Set[M] = mutable.Set[M]())
+    extends Query[M]
+    with SOneToMany[M] {
 
   def iterable: Iterable[M] = values
 

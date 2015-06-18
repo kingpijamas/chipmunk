@@ -5,11 +5,11 @@ import org.squeryl.dsl.ManyToManyRelation
 import org.squeryl.dsl.ManyToOne
 import org.squeryl.dsl.OneToMany
 import org.squeryl.dsl.OneToManyRelation
-import org.chipmunk.BinaryAssociation
 import org.chipmunk.DeclaredRelation
+import org.chipmunk.BinaryAssociation
+import org.chipmunk.Identifiable
 
-abstract class PersistentEntity[T <: PersistentEntity[T]]
-    extends Identifiable with Equals {
+abstract class Entity[T <: Entity[T]] extends Identifiable with Equals {
   self: T =>
 
   protected def owner[O](relation: => DeclaredRelation[OneToManyRelation[T, O]]): OneToMany[O] = {

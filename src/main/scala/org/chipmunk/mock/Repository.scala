@@ -4,9 +4,9 @@ import java.sql.SQLException
 
 import scala.collection.mutable
 
-import org.chipmunk.ddd.Repository
+import org.chipmunk.persistent.{ Repository => RealRepository }
 
-class MockRepository[M <: MockPersistentEntity[_]] extends Repository[M] {
+class Repository[M <: Entity[_]] extends RealRepository[M] {
   val elems: mutable.Set[M] = mutable.Set[M]()
 
   def get(id: Long): Iterable[M] = elems find { _.id == id }

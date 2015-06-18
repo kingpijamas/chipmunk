@@ -1,9 +1,9 @@
 package org.chipmunk.mock
 
-import org.squeryl.Query
+import org.squeryl.{ Query => SQuery }
 import org.squeryl.internals.ResultSetMapper
 
-abstract class MockQuery[R] extends Query[R] {
+abstract class Query[R] extends SQuery[R] {
   def iterable: Iterable[R]
 
   def iterator: Iterator[R] = iterable.iterator
@@ -13,15 +13,15 @@ abstract class MockQuery[R] extends Query[R] {
 
   def copy(asRoot: Boolean): org.squeryl.Query[R] = ???
 
-  def distinct: Query[R] = ???
+  def distinct: SQuery[R] = ???
 
   def dumpAst: String = ???
 
-  def forUpdate: Query[R] = ???
+  def forUpdate: SQuery[R] = ???
 
   def invokeYield(rsm: ResultSetMapper, resultSet: java.sql.ResultSet): R = ???
 
-  def page(offset: Int, pageLength: Int): Query[R] = ???
+  def page(offset: Int, pageLength: Int): SQuery[R] = ???
 
   def statement: String = ???
 
