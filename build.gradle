@@ -1,0 +1,83 @@
+buildscript {
+    repositories {
+      jcenter()
+    }
+
+    dependencies {
+		classpath group: 'org.github.ngbinh.scalastyle', name:'gradle-scalastyle-plugin_2.11', version: '0.7.2'
+    }
+}
+
+plugins {
+  id "com.github.maiflai.scalatest" version "0.6-5-g9065d91"
+}
+
+apply plugin: 'java'
+apply plugin: 'scala'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+apply plugin: 'scalaStyle'
+
+version='1.0'
+mainClassName = 'JettyLauncher'
+
+ext {
+	scala_major_version = '2.11'
+	scala_minor_version = '1'
+	scala_version = scala_major_version + '.' + scala_minor_version
+	scala_suffix = '_' + scala_major_version
+
+	squeryl_version = '0.9.5-7'
+
+	scalatest_version = '2.2.1'
+	scalamock_version = '3.2.1'
+
+	apache_commons_version = '3.3.2'
+	joda_time_version = '2.5'
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	maven {
+		url 'http://repo.typesafe.com/typesafe/releases'
+	}
+}
+
+compileScala {
+    scalaCompileOptions.useCompileDaemon = true
+    scalaCompileOptions.additionalParameters = ["-feature", "-deprecation"]
+}
+
+compileTestScala {
+    scalaCompileOptions.useCompileDaemon = true
+    scalaCompileOptions.additionalParameters = ["-feature", "-deprecation"]
+}
+
+tasks.withType(ScalaCompile) {
+    scalaCompileOptions.useAnt = false
+}
+
+scalaStyle {
+    configLocation = "/src/test/resources/scalastyle-config.xml"
+    includeTestSourceDirectory = true
+    source = "src/main/scala"
+    testSource = "src/test/scala"
+}
+
+dependencies {
+	//Scala
+	compile group: 'org.scala-lang', name: 'scala-compiler', version: scala_version
+	compile group: 'org.scala-lang', name: 'scala-library', version: scala_version
+
+    //Persistence
+    compile group: 'org.squeryl', name: 'squeryl' + scala_suffix, version: squeryl_version
+
+	//Testing
+	testCompile group: 'org.scalatest', name: 'scalatest' + scala_suffix, version: scalatest_version
+	testCompile group: 'org.scalamock', name: 'scalamock-scalatest-support' + scala_suffix, version: scalamock_version
+
+	//Utils
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: apache_commons_version
+    compile group: 'joda-time', name: 'joda-time', version: joda_time_version
+}
