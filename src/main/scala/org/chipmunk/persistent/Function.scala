@@ -2,6 +2,7 @@ package org.chipmunk.persistent
 
 import org.squeryl.annotations.Transient
 
+//TODO: make F have to be a function!
 abstract class Function[T <: Function[T, F], F](val pType: Type)
     extends Entity[T] {
   self: T =>

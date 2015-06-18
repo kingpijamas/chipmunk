@@ -6,23 +6,27 @@ import org.chipmunk.mock.ManyToMany.A
 import org.squeryl.{ Query => SQuery }
 import org.squeryl.dsl.{ ManyToMany => SManyToMany }
 import org.chipmunk.Identifiable
+import org.chipmunk.Identifiable.Id
 
 object ManyToMany {
-  private[ManyToMany]type A = BinaryAssociation
+  private type A = BinaryAssociation
+
+  def apply[O <: Identifiable](
+    outerId: Id,
+    owningSide: Boolean,
+    values: (O, A)*): SManyToMany[O, A] =
+    new ManyToMany[O](outerId, owningSide, mutable.Set() ++= values)
 }
 
-class ManyToMany[O <: Identifiable](
-  val owningSide: Boolean,
-  val outerIdGetter: Unit => Long,
-  val values: mutable.Set[(O, A)] = mutable.Set[(O, A)]())
-    extends Query[O]
-    with SManyToMany[O, A] {
+private class ManyToMany[O <: Identifiable](
+  outerId: Id,
+  owningSide: Boolean,
+  values: mutable.Set[(O, A)])
+    extends Query[O] with SManyToMany[O, A] {
 
   def iterable: Iterable[O] = values map { _._1 }
 
   def assign(o: O): A = {
-    val outerId = outerIdGetter(())
-
     val ownerId = if (owningSide) outerId else o.id
     val owneeId = if (owningSide) o.id else outerId
 

@@ -6,9 +6,13 @@ import scala.collection.mutable
 import org.squeryl.KeyedEntity
 import org.squeryl.dsl.{ OneToMany => SOneToMany }
 
-class OneToMany[M](val values: mutable.Set[M] = mutable.Set[M]())
-    extends Query[M]
-    with SOneToMany[M] {
+object OneToMany {
+  def apply[M](values: M*): SOneToMany[M] =
+    new OneToMany[M](mutable.Set() ++= values)
+}
+
+private class OneToMany[M](values: mutable.Set[M])
+    extends Query[M] with SOneToMany[M] {
 
   def iterable: Iterable[M] = values
 

@@ -8,5 +8,7 @@ object Identifiable {
 }
 
 trait Identifiable extends KeyedEntity[Id] {
-  var id: Id = 0
+  private[chipmunk] var _id: Id = 0
+
+  def id: Id = _id
 }

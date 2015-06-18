@@ -4,9 +4,9 @@ import java.sql.SQLException
 
 import scala.collection.mutable
 
-import org.chipmunk.persistent.{ Repository => RealRepository }
+import org.chipmunk.persistent
 
-class Repository[M <: Entity[_]] extends RealRepository[M] {
+class Repository[M <: Entity[_]] extends persistent.Repository[M] {
   val elems: mutable.Set[M] = mutable.Set[M]()
 
   def get(id: Long): Iterable[M] = elems find { _.id == id }
