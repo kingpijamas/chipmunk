@@ -73,12 +73,7 @@ jrebel.lic
 bin/*
 build/*
 /bin
+.cache-*
 
 # scalastyle
 .scalastyle
-
-# stree
-data
-/build
-
-.cache-*
