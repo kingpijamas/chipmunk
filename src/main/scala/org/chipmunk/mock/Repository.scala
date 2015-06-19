@@ -6,8 +6,14 @@ import scala.collection.mutable
 
 import org.chipmunk.persistent
 
-class Repository[M <: Entity[_]] extends persistent.Repository[M] {
-  val elems: mutable.Set[M] = mutable.Set[M]()
+object Repository {
+  def apply[M <: Entity[_]](mockEntities: M*): persistent.Repository[M] = {
+    new Repository[M](mutable.Set[M]() ++= mockEntities)
+  }
+}
+
+private class Repository[M <: Entity[_]](elems: mutable.Set[M])
+    extends persistent.Repository[M] {
 
   def get(id: Long): Iterable[M] = elems find { _.id == id }
 
