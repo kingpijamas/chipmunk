@@ -1,0 +1,2 @@
+# chipmunk
+Small squeryl wrapper
