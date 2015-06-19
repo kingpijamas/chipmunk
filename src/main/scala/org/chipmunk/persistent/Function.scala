@@ -11,16 +11,13 @@ abstract class Function[T <: Function[T, F], F](val pType: Type)
 
   @Transient // java annotation
   @transient
-  private lazy val _f: F = instanceF()
+  protected lazy val _f: F = instanceF()
 
-  // no, this isn't a Java-ism, it's just that 'loadF' wasn't declarative enough
-  def getF(): F = _f
-
-  private def instanceF(): F = {
+  private[this] def instanceF(): F = {
     val clazz = pType.asClass
     val constructor = clazz.getConstructor()
-    val innerCondAsObject = constructor.newInstance()
+    val innerCond = constructor.newInstance()
 
-    innerCondAsObject.asInstanceOf[F]
+    innerCond.asInstanceOf[F]
   }
 }
