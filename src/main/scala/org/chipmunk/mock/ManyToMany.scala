@@ -54,9 +54,9 @@ private class ManyToMany[O <: Identifiable](
   }
 
   def dissociate(o: O): Boolean = {
-    val found = values.contains(o)
+    val formerSize = values.size
     values -= o
-    found
+    values.size < formerSize
   }
 
   def dissociateAll: Int = {

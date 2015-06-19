@@ -2,22 +2,23 @@ package org.chipmunk.persistent
 
 import org.squeryl.annotations.Transient
 
-//TODO: make F have to be a function!
-abstract class Function[T <: Function[T, F], F](val pType: Type)
-    extends Entity[T] {
+abstract class Function[T <: Function[T, I, O], I, O](val typ: Type)
+    extends Entity[T] with (I => O) {
   self: T =>
-
-  def this(fClass: Class[_ <: F]) = this(new Type(fClass))
 
   @Transient // java annotation
   @transient
-  protected lazy val _f: F = instanceF()
+  private[this] lazy val _f: (I => O) = instanceF()
 
-  private[this] def instanceF(): F = {
-    val clazz = pType.asClass
+  def this(fClass: Class[_ <: (I => O)]) = this(new Type(fClass))
+
+  def apply(params: I): O = _f(params)
+
+  private[this] def instanceF(): (I => O) = {
+    val clazz = typ.asClass
     val constructor = clazz.getConstructor()
     val innerCond = constructor.newInstance()
 
-    innerCond.asInstanceOf[F]
+    innerCond.asInstanceOf[(I => O)]
   }
 }
