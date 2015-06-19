@@ -11,6 +11,7 @@ import org.squeryl.dsl.{ Relation => SquerylRelation }
 import org.squeryl.dsl.{ Relation => SquerylRelation }
 import org.squeryl.dsl.ManyToManyRelation
 import org.squeryl.dsl.ast.EqualityExpression
+import org.squeryl.dsl.OneToManyRelation
 
 trait SplittableSchema extends Schema {
   private[this] var relationDeclarations = mutable.Buffer[DeclaredRelation[_]]()
@@ -21,28 +22,34 @@ trait SplittableSchema extends Schema {
     tbl
   }
 
-  protected def relation[R <: SquerylRelation[_, _]](init: => R): DeclaredRelation[R] = {
+  protected def oneToMany[O <: persistent.Entity[_], M](
+    getTableO: SplittableSchema.this.type => Table[O],
+    getTableM: SplittableSchema.this.type => Table[M])
+    (f: (O, M) => EqualityExpression)
+  : DeclaredRelation[OneToManyRelation[O, M]] = {
+    addRelation {
+      oneToManyRelation(getTableO(this), getTableM(this)).via(f)
+    }
+  }
+
+  protected def manyToMany[L <: persistent.Entity[_], R <: persistent.Entity[_]](
+    getTableL: SplittableSchema.this.type => Table[L],
+    getTableR: SplittableSchema.this.type => Table[R],
+    nameOfMiddleTable: String)
+  : DeclaredRelation[ManyToManyRelation[L, R, BinaryAssociation]] = {
+    addRelation {
+      manyToManyRelation(getTableL(this), getTableR(this), nameOfMiddleTable).via[BinaryAssociation](
+        (left, right, assoc) => (left.id === assoc.ownerId, assoc.owneeId === right.id))
+    }
+  }
+
+  private[this] def addRelation[R <: SquerylRelation[_, _]](init: => R): DeclaredRelation[R] = {
     val declaration = new DeclaredRelation(init)
     relationDeclarations += declaration
     declaration
   }
 
-  protected def manyToMany[L <: persistent.Entity[_], R <: persistent.Entity[_]](
-    tableL: Table[L], tableR: Table[R], nameOfMiddleTable: String): DeclaredRelation[SquerylRelation[L, R]] = {
-    relation {
-      manyToManyRelation(tableL, tableR, nameOfMiddleTable).via[BinaryAssociation](
-        (l, r, a) => (l.id === a.ownerId, r.id === a.owneeId))
-    }
-  }
-
-  protected def oneToMany[O <: persistent.Entity[_], M](
-    tableO: Table[O], tableM: Table[M], f: (O, M) => EqualityExpression): DeclaredRelation[SquerylRelation[O, M]] = {
-    relation {
-      oneToManyRelation(tableO, tableM).via(f)
-    }
-  }
-
-  def initRelations(): Unit = {
+  protected def initRelations(): Unit = {
     relationDeclarations foreach { _.init() }
   }
 }

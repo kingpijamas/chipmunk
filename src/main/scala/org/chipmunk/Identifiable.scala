@@ -8,7 +8,5 @@ object Identifiable {
 }
 
 trait Identifiable extends KeyedEntity[Id] {
-  private[chipmunk] var _id: Id = 0
-
-  def id: Id = _id
+  var id: Id = 0 // cannot just be hidden or a val, or else it will not be fully usable as an index!
 }
