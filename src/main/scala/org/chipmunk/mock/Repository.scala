@@ -15,7 +15,7 @@ object Repository {
 private class Repository[M <: Entity[_]](elems: mutable.Set[M])
     extends persistent.Repository[M] {
 
-  def get(id: Long): Iterable[M] = elems find { _.id == id }
+  def get(id: Long): Option[M] = elems find { _.id == id }
 
   def remove(elem: M): Int = {
     if (!elems.remove(elem)) { throw new SQLException() }

@@ -11,9 +11,9 @@ private[function] trait FunctionLike[T <: FunctionLike[T, I, O], I, O]
 
   @Transient // java annotation
   @transient
-  private[this] lazy val _f: I => O = resolveF()
+  private[this] lazy val f: I => O = resolveF()
 
   protected def resolveF()(implicit classTag: ClassTag[I => O]): I => O
 
-  def apply(params: I): O = _f(params)
+  def apply(params: I): O = f(params)
 }
