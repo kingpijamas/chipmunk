@@ -5,12 +5,14 @@ import org.squeryl.PrimitiveTypeMode.from
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.where
 import org.squeryl.Table
+import org.chipmunk.Identifiable.Id
 
 abstract class SquerylRepo[T <: Entity[T]] extends Repository[T] {
   protected def table: Table[T]
 
-  def get(id: Long): Iterable[T] = {
-    from(table)(s => where(s.id === id).select(s))
+  def get(id: Id): Option[T] = {
+    val elems = from(table)(s => where(s.id === id).select(s))
+    elems.headOption
   }
 
   /**

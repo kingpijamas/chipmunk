@@ -38,6 +38,7 @@ dependencies {
 	//Scala
 	compile group: 'org.scala-lang', name: 'scala-compiler', version: scala_version
 	compile group: 'org.scala-lang', name: 'scala-library', version: scala_version
+	compile group: 'org.scala-lang', name:'scala-reflect', version: scala_version
 
 	//Persistence
 	compile group: 'org.squeryl', name: 'squeryl' + scala_suffix, version: '0.9.5-7'
@@ -74,7 +75,7 @@ publishing {
 		mavenJava(MavenPublication) {
 			groupId 'org.chipmunk'
 			artifactId 'chipmunk'
-			
+
 			from components.java
 
 			artifact sourceJar { classifier "sources" }
