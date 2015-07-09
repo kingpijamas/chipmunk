@@ -16,7 +16,10 @@ import org.squeryl.dsl.OneToManyRelation
 trait SplittableSchema extends Schema {
   private[this] var relationDeclarations = mutable.Buffer[DeclaredRelation[_]]()
 
-  protected def declaration[R](constraints: Table[R] => Unit)(implicit manifestT: Manifest[R]): Table[R] = {
+  protected def declaration[R]
+    (constraints: Table[R] => Unit)
+    (implicit manifestT: Manifest[R])
+  : Table[R] = {
     val tbl = table[R]
     constraints(tbl)
     tbl
@@ -38,12 +41,17 @@ trait SplittableSchema extends Schema {
     nameOfMiddleTable: String)
   : DeclaredRelation[ManyToManyRelation[L, R, BinaryAssociation]] = {
     addRelation {
-      manyToManyRelation(getTableL(this), getTableR(this), nameOfMiddleTable).via[BinaryAssociation](
+      manyToManyRelation(
+          getTableL(this),
+          getTableR(this),
+          nameOfMiddleTable).via[BinaryAssociation](
         (left, right, assoc) => (left.id === assoc.ownerId, assoc.owneeId === right.id))
     }
   }
 
-  private[this] def addRelation[R <: SquerylRelation[_, _]](init: => R): DeclaredRelation[R] = {
+  private[this] def addRelation[R <: SquerylRelation[_, _]](
+      init: => R)
+  : DeclaredRelation[R] = {
     val declaration = new DeclaredRelation(init)
     relationDeclarations += declaration
     declaration
@@ -55,15 +63,15 @@ trait SplittableSchema extends Schema {
 }
 
 class DeclaredRelation[R <: SquerylRelation[_, _]](initRel: => R) {
-  private[this] var _rel: Option[R] = _
+  private[this] var rel: Option[R] = _
 
   private[chipmunk] def init(): Unit = {
-    _rel = Option(initRel)
-    assume(_rel.isDefined, "Relation initialization failure")
+    rel = Option(initRel)
+    assume(rel.isDefined, "Relation initialization failure")
   }
 
   private[chipmunk] def value: R = {
-    assume(_rel.isDefined, "Relation not initialized")
-    _rel.get
+    assume(rel.isDefined, "Relation not initialized")
+    rel.get
   }
 }

@@ -19,7 +19,7 @@ private class Repository[M <: Entity[_]](elems: mutable.Set[M])
   def remove(elem: M): Int = {
     if (!elems.remove(elem)) { throw new SQLException() }
 
-    elem._isMockPersisted = false // TODO:check!
+    elem.isMockPersisted = false // TODO:check!
     1 // # of elems removed
   }
 
@@ -29,7 +29,7 @@ private class Repository[M <: Entity[_]](elems: mutable.Set[M])
     if (elems.contains(elem)) { throw new SQLException() }
 
     elems += elem
-    elem._isMockPersisted = true // TODO:check!
+    elem.isMockPersisted = true // TODO:check!
     elem
   }
 }

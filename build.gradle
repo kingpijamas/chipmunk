@@ -26,12 +26,12 @@ mainClassName = '' //ugly, but hey, this is a library after all!
 
 ext {
 	scala_major_version = '2.11'
-	scala_minor_version = '1'
+	scala_minor_version = '7'
 	scala_version = scala_major_version + '.' + scala_minor_version
 	scala_suffix = '_' + scala_major_version
 
-	//	scalatest_version = '2.2.1'
-	//	scalamock_version = '3.2.1'
+	scalatest_version = '2.2.5'
+	scalamock_version = '3.2.2'
 }
 
 dependencies {
@@ -48,14 +48,14 @@ dependencies {
 	compile group: 'org.joda', name: 'joda-convert', version: '1.7'
 
 	//Testing
-	//testCompile group: 'org.scalatest', name: 'scalatest' + scala_suffix, version: scalatest_version
-	//testCompile group: 'org.scalamock', name: 'scalamock-scalatest-support' + scala_suffix, version: scalamock_version
+	testCompile group: 'org.scalatest', name: 'scalatest' + scala_suffix, version: scalatest_version
+	testCompile group: 'org.scalamock', name: 'scalamock-scalatest-support' + scala_suffix, version: scalamock_version
 }
 
 tasks.withType(ScalaCompile) {
 	scalaCompileOptions.useAnt = false
 	scalaCompileOptions.useCompileDaemon = true
-	scalaCompileOptions.additionalParameters = ["-feature", "-deprecation"]
+	scalaCompileOptions.additionalParameters = ["-feature", "-deprecation", "-target:jvm-1.8"]
 }
 
 scalaStyle {

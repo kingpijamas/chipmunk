@@ -16,12 +16,18 @@ abstract class Object[T <: Object[T, O], O](val typ: Type) extends Entity[T] {
 
   def this(obj: O) = this(obj.getClass)
 
-  protected def getValue()(implicit classTag: ClassTag[O], typeTag: TypeTag[O]): O = {
+  protected def getValue()(
+    implicit classTag: ClassTag[O],
+    typeTag: TypeTag[O])
+  : O = {
     if (obj == null) { obj = resolveObj() }
     obj
   }
 
-  private[this] def resolveObj()(implicit classTag: ClassTag[O], typeTag: TypeTag[O]): O = {
+  private[this] def resolveObj()(
+    implicit classTag: ClassTag[O],
+    typeTag: TypeTag[O])
+  : O = {
     val classNameProper = typ.classNameProper
     val moduleSymbol = currentMirror.staticModule(classNameProper)
     val moduleMirror = currentMirror.reflectModule(moduleSymbol)
@@ -36,11 +42,5 @@ abstract class Object[T <: Object[T, O], O](val typ: Type) extends Entity[T] {
     }
   }
 
-  override def equals(other: Any): Boolean = other match {
-    case that: Object[T, O] => that.canEqual(this) &&
-      typ.classNameProper == that.typ.classNameProper
-    case _ => false
-  }
-
-  override def hashCode: Int = 41 * typ.classNameProper.hashCode
+  protected def keys: Product = Tuple1(typ.classNameProper)
 }

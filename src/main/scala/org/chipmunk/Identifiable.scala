@@ -8,5 +8,9 @@ object Identifiable {
 }
 
 trait Identifiable extends KeyedEntity[Id] {
-  var id: Id = 0 // cannot just be hidden or a val, or else it will not be fully usable as an index!
+  /*
+   * cannot just be hidden or a val, or else it will not be
+   * fully usable as an index!
+   */
+  var id: Id = 0
 }
