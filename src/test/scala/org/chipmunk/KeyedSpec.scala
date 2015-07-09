@@ -47,8 +47,4 @@ class KeyedSpec extends FlatSpec with MockFactory {
   private[this] class EntityA(val x: Int) extends Keyed {
     protected def keys: Product = Tuple1(x)
   }
-
-  private[this] class EntityB(x: Int, y: Int) extends EntityA(x) {
-    override protected def keys: Product = (super.keys, y)
-  }
 }

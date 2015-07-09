@@ -49,6 +49,7 @@ dependencies {
 
 	//Testing
 	testCompile group: 'org.scalatest', name: 'scalatest' + scala_suffix, version: scalatest_version
+	testCompile group: 'org.pegdown', name: 'pegdown', version:'1.5.0' // optional scalatest dependency
 	testCompile group: 'org.scalamock', name: 'scalamock-scalatest-support' + scala_suffix, version: scalamock_version
 }
 
