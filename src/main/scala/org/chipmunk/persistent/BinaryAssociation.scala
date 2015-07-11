@@ -5,7 +5,9 @@ import org.squeryl.KeyedEntity
 import org.squeryl.PrimitiveTypeMode.compositeKey
 import org.squeryl.dsl.CompositeKey2
 
-class BinaryAssociation(val ownerId: Id, val owneeId: Id)
+class BinaryAssociation(
+  val ownerId: Id,
+  val owneeId: Id)
     extends KeyedEntity[CompositeKey2[Id, Id]] {
 
   // no-arg constructor

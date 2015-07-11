@@ -1,15 +1,15 @@
 package org.chipmunk.persistent
 
-import java.sql.{ Date => JDate }
+import java.sql.{ Date => SQLDate }
 
 import scala.language.implicitConversions
 
 import org.joda.time.DateTime
 
 object Date {
-  implicit def dateAsPersistentDate(date: JDate): Date = new Date(date)
+  implicit def sqlDateAsPersistentDate(date: SQLDate): Date = new Date(date)
 }
 
-class Date(date: JDate) {
+class Date(date: SQLDate) {
   def asJoda: DateTime = new DateTime(date.getTime)
 }
