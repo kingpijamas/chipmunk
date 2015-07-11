@@ -1,14 +1,13 @@
 package org.chipmunk.persistent
 
+import org.chipmunk.DeclaredRelation
+import org.chipmunk.Identifiable
+import org.chipmunk.Keyed
 import org.squeryl.dsl.ManyToMany
 import org.squeryl.dsl.ManyToManyRelation
 import org.squeryl.dsl.ManyToOne
 import org.squeryl.dsl.OneToMany
 import org.squeryl.dsl.OneToManyRelation
-import org.chipmunk.DeclaredRelation
-import org.chipmunk.persistent.BinaryAssociation
-import org.chipmunk.Identifiable
-import org.chipmunk.Keyed
 
 trait Entity[T <: Entity[T]] extends Identifiable with Keyed {
   self: T =>

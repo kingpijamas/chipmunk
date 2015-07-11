@@ -51,7 +51,7 @@ trait SplittableSchema extends Schema {
   }
 
   private[this] def addRelation[R <: SquerylRelation[_, _]](
-      init: => R)
+    init: => R)
   : DeclaredRelation[R] = {
     val declaration = new DeclaredRelation(init)
     relationDeclarations += declaration
