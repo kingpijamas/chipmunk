@@ -1,7 +1,7 @@
 package org.chipmunk.mock
 
 import scala.collection.mutable
-import org.chipmunk.BinaryAssociation
+import org.chipmunk.persistent.BinaryAssociation
 import org.chipmunk.mock.ManyToMany.A
 import org.squeryl.{ Query => SQuery }
 import org.squeryl.dsl.{ ManyToMany => SManyToMany }

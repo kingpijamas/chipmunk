@@ -6,7 +6,7 @@ import org.squeryl.dsl.ManyToOne
 import org.squeryl.dsl.OneToMany
 import org.squeryl.dsl.OneToManyRelation
 import org.chipmunk.DeclaredRelation
-import org.chipmunk.BinaryAssociation
+import org.chipmunk.persistent.BinaryAssociation
 import org.chipmunk.Identifiable
 import org.chipmunk.Keyed
 

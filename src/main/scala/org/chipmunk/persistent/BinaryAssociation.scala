@@ -1,4 +1,4 @@
-package org.chipmunk
+package org.chipmunk.persistent
 
 import org.chipmunk.Identifiable.Id
 import org.squeryl.KeyedEntity

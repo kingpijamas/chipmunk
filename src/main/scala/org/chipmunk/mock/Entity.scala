@@ -1,6 +1,6 @@
 package org.chipmunk.mock
 
-import org.chipmunk.BinaryAssociation
+import org.chipmunk.persistent.BinaryAssociation
 import org.chipmunk.DeclaredRelation
 import org.chipmunk.Identifiable
 import org.chipmunk.persistent

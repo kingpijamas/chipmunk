@@ -12,6 +12,7 @@ import org.squeryl.dsl.{ Relation => SquerylRelation }
 import org.squeryl.dsl.ManyToManyRelation
 import org.squeryl.dsl.ast.EqualityExpression
 import org.squeryl.dsl.OneToManyRelation
+import org.chipmunk.persistent.BinaryAssociation
 
 trait SplittableSchema extends Schema {
   private[this] var relationDeclarations = mutable.Buffer[DeclaredRelation[_]]()
