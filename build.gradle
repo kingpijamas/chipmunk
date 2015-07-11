@@ -2,11 +2,11 @@ buildscript {
 	repositories { jcenter() }
 
 	dependencies {
-		classpath group: 'org.github.ngbinh.scalastyle', name:'gradle-scalastyle-plugin_2.11', version: '0.7.2'
+		classpath group: 'org.github.ngbinh.scalastyle', name: 'gradle-scalastyle-plugin_2.11', version: '0.7.2'
 	}
 }
 
-plugins { id "com.github.maiflai.scalatest" version "0.6-5-g9065d91" }
+plugins { id 'com.github.maiflai.scalatest' version '0.7' }
 
 apply plugin: 'java'
 apply plugin: 'scala'
@@ -38,25 +38,28 @@ dependencies {
 	//Scala
 	compile group: 'org.scala-lang', name: 'scala-compiler', version: scala_version
 	compile group: 'org.scala-lang', name: 'scala-library', version: scala_version
-	compile group: 'org.scala-lang', name:'scala-reflect', version: scala_version
+	compile group: 'org.scala-lang', name: 'scala-reflect', version: scala_version
 
 	//Persistence
 	compile group: 'org.squeryl', name: 'squeryl' + scala_suffix, version: '0.9.5-7'
 
 	//Time
 	compile group: 'joda-time', name: 'joda-time', version: '2.5'
-	compile group: 'org.joda', name: 'joda-convert', version: '1.7'
 
 	//Testing
 	testCompile group: 'org.scalatest', name: 'scalatest' + scala_suffix, version: scalatest_version
-	testCompile group: 'org.pegdown', name: 'pegdown', version:'1.5.0' // optional scalatest dependency
+	testRuntime group: 'org.pegdown', name: 'pegdown', version:'1.5.0'
 	testCompile group: 'org.scalamock', name: 'scalamock-scalatest-support' + scala_suffix, version: scalamock_version
 }
 
 tasks.withType(ScalaCompile) {
 	scalaCompileOptions.useAnt = false
 	scalaCompileOptions.useCompileDaemon = true
-	scalaCompileOptions.additionalParameters = ["-feature", "-deprecation", "-target:jvm-1.8"]
+	scalaCompileOptions.additionalParameters = [
+		"-feature",
+		"-deprecation",
+		"-target:jvm-1.8"
+	]
 }
 
 scalaStyle {
