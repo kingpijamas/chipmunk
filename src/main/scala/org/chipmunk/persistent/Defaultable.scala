@@ -7,12 +7,15 @@ import java.sql.Timestamp
 import java.util.UUID
 import scala.annotation.implicitNotFound
 
-@implicitNotFound("No member of type class Defaultable in scope for ${T}")
+@implicitNotFound("No member of typeclass Defaultable in scope for ${T}")
 trait Defaultable[T] {
   def defaultVal: T
 }
 
 object Defaultable {
+  def defaultOf[T: Defaultable]: T =
+    implicitly[Defaultable[T]].defaultVal
+
   implicit object DefaultableInt extends Defaultable[Int] {
     val defaultVal: Int = 0
   }
@@ -65,10 +68,8 @@ object Defaultable {
     val defaultVal: Duration = new Duration
   }
 
-  implicit def defaultableOption[T: Defaultable]: Defaultable[Option[T]] = {
+  implicit def defaultableOption[T: Defaultable]: Defaultable[Option[T]] =
     new Defaultable[Option[T]] {
-      val defaultVal: Option[T] =
-        Some(implicitly[Defaultable[T]].defaultVal)
+      val defaultVal: Option[T] = Some(defaultOf[T])
     }
-  }
 }
