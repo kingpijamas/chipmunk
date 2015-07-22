@@ -35,7 +35,7 @@ trait SplittableSchema extends Schema {
       oneToManyRelation(getTableO(this), getTableM(this)).via(f)
     }
   }
-  
+
   protected def manyToMany[L <: Entity[_], R <: Entity[_]](
     getTableL: this.type => Table[L],
     getTableR: this.type => Table[R],
@@ -43,6 +43,16 @@ trait SplittableSchema extends Schema {
   : Declaration[ManyToManyRelation[L, R, Association2]] = {
     declare {
       manyToManyRelation(getTableL(this), getTableR(this), nameOfAssocTable).
+       via[Association2](manyToManyJoin)
+    }
+  }
+
+  protected def manyToMany[L <: Entity[_], R <: Entity[_]](
+    getTableL: this.type => Table[L],
+    getTableR: this.type => Table[R])
+  : Declaration[ManyToManyRelation[L, R, Association2]] = {
+    declare {
+      manyToManyRelation(getTableL(this), getTableR(this)).
        via[Association2](manyToManyJoin)
     }
   }
