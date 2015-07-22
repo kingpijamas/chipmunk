@@ -26,33 +26,34 @@ trait SplittableSchema extends Schema {
     tbl
   }
 
-  protected def oneToMany[O <: persistent.Entity[_], M](
-    getTableO: SplittableSchema.this.type => Table[O],
-    getTableM: SplittableSchema.this.type => Table[M])
-    (f: (O, M) => EqualityExpression)
+  protected def oneToMany[O <: Entity[_], M](
+    tableOfO: => Table[O],
+    tableOfM: => Table[M])
+    (joinAttr: M => Id)
   : Declaration[OneToManyRelation[O, M]] = {
     declare {
-      oneToManyRelation(getTableO(this), getTableM(this)).via(f)
+      oneToManyRelation(tableOfO, tableOfM).
+        via((o: O, m: M) => o.id === joinAttr(m))
     }
   }
 
   protected def manyToMany[L <: Entity[_], R <: Entity[_]](
-    getTableL: this.type => Table[L],
-    getTableR: this.type => Table[R],
-    nameOfAssocTable: String)
+    tableOfL: => Table[L],
+    tableOfR: => Table[R],
+    tableName: String)
   : Declaration[ManyToManyRelation[L, R, Association2]] = {
     declare {
-      manyToManyRelation(getTableL(this), getTableR(this), nameOfAssocTable).
+      manyToManyRelation(tableOfL, tableOfR, tableName).
        via[Association2](manyToManyJoin)
     }
   }
 
   protected def manyToMany[L <: Entity[_], R <: Entity[_]](
-    getTableL: this.type => Table[L],
-    getTableR: this.type => Table[R])
+    tableOfL: => Table[L],
+    tableOfR: => Table[R])
   : Declaration[ManyToManyRelation[L, R, Association2]] = {
     declare {
-      manyToManyRelation(getTableL(this), getTableR(this)).
+      manyToManyRelation(tableOfL, tableOfR).
        via[Association2](manyToManyJoin)
     }
   }
