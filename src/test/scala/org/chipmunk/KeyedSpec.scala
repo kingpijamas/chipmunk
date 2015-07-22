@@ -1,7 +1,6 @@
 package org.chipmunk
 
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.Finders
 import org.scalatest.FlatSpec
 
 class KeyedSpec extends FlatSpec with MockFactory {

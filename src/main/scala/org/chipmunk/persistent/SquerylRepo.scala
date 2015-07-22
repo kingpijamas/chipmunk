@@ -1,11 +1,11 @@
 package org.chipmunk.persistent
 
+import org.chipmunk.Identifiable.Id
 import org.squeryl.PrimitiveTypeMode.__thisDsl
 import org.squeryl.PrimitiveTypeMode.from
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.where
 import org.squeryl.Table
-import org.chipmunk.Identifiable.Id
 
 abstract class SquerylRepo[T <: Entity[T]] extends Repository[T] {
   protected def table: Table[T]

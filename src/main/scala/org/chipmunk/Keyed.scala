@@ -1,7 +1,5 @@
 package org.chipmunk
 
-import org.chipmunk.persistent.Entity
-
 trait Keyed extends Equals {
   protected def keys: Product
 

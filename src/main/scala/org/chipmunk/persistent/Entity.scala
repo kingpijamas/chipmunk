@@ -1,6 +1,6 @@
 package org.chipmunk.persistent
 
-import org.chipmunk.DeclaredRelation
+import org.chipmunk.Declaration
 import org.chipmunk.Identifiable
 import org.chipmunk.Keyed
 import org.squeryl.dsl.ManyToMany
@@ -13,26 +13,26 @@ trait Entity[T <: Entity[T]] extends Identifiable with Keyed {
   self: T =>
 
   protected def owner[O](
-    relation: => DeclaredRelation[OneToManyRelation[T, O]])
+    relation: => Declaration[OneToManyRelation[T, O]])
   : OneToMany[O] = {
     relation.value.left(this)
   }
 
   protected def owner[R <: Identifiable](
-    relation: => DeclaredRelation[ManyToManyRelation[T, R, BinaryAssociation]])
-  : ManyToMany[R, BinaryAssociation] = {
+    relation: => Declaration[ManyToManyRelation[T, R, Association2]])
+  : ManyToMany[R, Association2] = {
     relation.value.left(this)
   }
 
   protected def ownee[O <: Identifiable](
-    relation: => DeclaredRelation[OneToManyRelation[O, T]])
+    relation: => Declaration[OneToManyRelation[O, T]])
   : ManyToOne[O] = {
     relation.value.right(this)
   }
 
   protected def ownee[L <: Identifiable](
-    relation: => DeclaredRelation[ManyToManyRelation[L, T, BinaryAssociation]])
-  : ManyToMany[L, BinaryAssociation] = {
+    relation: => Declaration[ManyToManyRelation[L, T, Association2]])
+  : ManyToMany[L, Association2] = {
     relation.value.right(this)
   }
 

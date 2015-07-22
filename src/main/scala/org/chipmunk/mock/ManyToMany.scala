@@ -1,7 +1,7 @@
 package org.chipmunk.mock
 
 import scala.collection.mutable
-import org.chipmunk.persistent.BinaryAssociation
+import org.chipmunk.persistent.Association2
 import org.chipmunk.mock.ManyToMany.A
 import org.squeryl.{ Query => SQuery }
 import org.squeryl.dsl.{ ManyToMany => SManyToMany }
@@ -9,7 +9,7 @@ import org.chipmunk.Identifiable
 import org.chipmunk.Identifiable.Id
 
 object ManyToMany {
-  private type A = BinaryAssociation
+  private type A = Association2
 
   def apply[O <: Identifiable](
     outerId: Id,
@@ -26,24 +26,24 @@ private class ManyToMany[O <: Identifiable](
 
   def iterable: Iterable[O] = values map { _._1 }
 
-  def assign(o: O): A = {
+  def assign(o: O): Association2 = {
     val ownerId = if (owningSide) outerId else o.id
     val owneeId = if (owningSide) o.id else outerId
 
-    val assoc = new BinaryAssociation(ownerId = ownerId, owneeId = owneeId)
+    val assoc = new Association2(ownerId = ownerId, owneeId = owneeId)
     assign(o, assoc)
   }
 
-  def assign(o: O, a: A): A = {
+  def assign(o: O, a: A): Association2 = {
     //CHECK: Os will almost always be persistent entities (and thus should have overriden hashCode).
     // If this weren't the case, hashing *will* be a problem when trying to use this class
     values += o -> a
     a
   }
 
-  def associate(o: O): A = { assign(o) }
+  def associate(o: O): Association2 = { assign(o) }
 
-  def associate(o: O, a: A): A = { assign(o, a) }
+  def associate(o: O, a: A): Association2 = { assign(o, a) }
 
   def associationMap: Query[(O, A)] = new Query[(O, A)] {
     def iterable: Iterable[(O, A)] = values

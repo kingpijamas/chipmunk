@@ -1,25 +1,25 @@
 package org.chipmunk
 
+import scala.collection.mutable
+import org.chipmunk.Identifiable.Id
+import org.chipmunk.persistent.Association2
+import org.chipmunk.persistent.Entity
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.manyToManyRelation
 import org.squeryl.PrimitiveTypeMode.oneToManyRelation
-import scala.collection.mutable
 import org.squeryl.Schema
-import org.squeryl.dsl.{ Relation => SquerylRelation }
 import org.squeryl.Table
-import org.squeryl.dsl.{ Relation => SquerylRelation }
-import org.squeryl.dsl.{ Relation => SquerylRelation }
 import org.squeryl.dsl.ManyToManyRelation
-import org.squeryl.dsl.ast.EqualityExpression
 import org.squeryl.dsl.OneToManyRelation
-import org.chipmunk.persistent.BinaryAssociation
+import org.squeryl.dsl.{ Relation => SquerylRelation }
+import org.squeryl.dsl.ast.EqualityExpression
 
 trait SplittableSchema extends Schema {
-  private[this] var relationDeclarations = mutable.Buffer[DeclaredRelation[_]]()
+  private[this] var relDeclarations = mutable.Buffer[Declaration[_]]()
 
   protected def declaration[R]
     (constraints: Table[R] => Unit)
-    (implicit manifestT: Manifest[R])
+    (implicit ev: Manifest[R])
   : Table[R] = {
     val tbl = table[R]
     constraints(tbl)
@@ -30,49 +30,50 @@ trait SplittableSchema extends Schema {
     getTableO: SplittableSchema.this.type => Table[O],
     getTableM: SplittableSchema.this.type => Table[M])
     (f: (O, M) => EqualityExpression)
-  : DeclaredRelation[OneToManyRelation[O, M]] = {
-    addRelation {
+  : Declaration[OneToManyRelation[O, M]] = {
+    declare {
       oneToManyRelation(getTableO(this), getTableM(this)).via(f)
     }
   }
-
-  protected def manyToMany[L <: persistent.Entity[_], R <: persistent.Entity[_]](
-    getTableL: SplittableSchema.this.type => Table[L],
-    getTableR: SplittableSchema.this.type => Table[R],
-    nameOfMiddleTable: String)
-  : DeclaredRelation[ManyToManyRelation[L, R, BinaryAssociation]] = {
-    addRelation {
-      manyToManyRelation(
-          getTableL(this),
-          getTableR(this),
-          nameOfMiddleTable).via[BinaryAssociation](
-        (left, right, assoc) => (left.id === assoc.ownerId, assoc.owneeId === right.id))
+  
+  protected def manyToMany[L <: Entity[_], R <: Entity[_]](
+    getTableL: this.type => Table[L],
+    getTableR: this.type => Table[R],
+    nameOfAssocTable: String)
+  : Declaration[ManyToManyRelation[L, R, Association2]] = {
+    declare {
+      manyToManyRelation(getTableL(this), getTableR(this), nameOfAssocTable).
+       via[Association2](manyToManyJoin)
     }
   }
 
-  private[this] def addRelation[R <: SquerylRelation[_, _]](
-    init: => R)
-  : DeclaredRelation[R] = {
-    val declaration = new DeclaredRelation(init)
-    relationDeclarations += declaration
+  private[this] def manyToManyJoin =
+    (l: Entity[_], r: Entity[_], a: Association2) =>
+      (l.id === a.ownerId, a.owneeId === r.id)
+
+  private[this] def declare[R <: SquerylRelation[_, _]](
+      rel: => R)
+  : Declaration[R] = {
+    val declaration = new Declaration(rel)
+    relDeclarations += declaration
     declaration
   }
 
   protected def initRelations(): Unit = {
-    relationDeclarations foreach { _.init() }
+    relDeclarations foreach { _.init() }
   }
 }
 
-class DeclaredRelation[R <: SquerylRelation[_, _]](initRel: => R) {
-  private[this] var rel: Option[R] = _
+class Declaration[R <: SquerylRelation[_, _]](rel: => R) {
+  private[this] var _rel: Option[R] = _
 
   private[chipmunk] def init(): Unit = {
-    rel = Option(initRel)
-    assume(rel.isDefined, "Relation initialization failure")
+    _rel = Option(rel)
+    assume(_rel.isDefined, "Relation initialization failure")
   }
 
   private[chipmunk] def value: R = {
-    assume(rel.isDefined, "Relation not initialized")
-    rel.get
+    assume(_rel.isDefined, "Relation not initialized")
+    _rel.get
   }
 }

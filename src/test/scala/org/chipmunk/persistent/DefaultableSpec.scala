@@ -1,11 +1,8 @@
 package org.chipmunk.persistent
 
-import scala.annotation.implicitNotFound
-
 import org.chipmunk.persistent.Defaultable.DefaultableInt
 import org.chipmunk.persistent.Defaultable.defaultOf
 import org.chipmunk.persistent.Defaultable.defaultableOption
-import org.scalatest.Finders
 import org.scalatest.FlatSpec
 
 class DefaultableSpec extends FlatSpec {

@@ -1,17 +1,17 @@
 package org.chipmunk.persistent
 
 import org.chipmunk.Identifiable.Id
+import org.chipmunk.persistent.Defaultable.DefaultableLong
+import org.chipmunk.persistent.Defaultable.defaultOf
 import org.squeryl.KeyedEntity
 import org.squeryl.PrimitiveTypeMode.compositeKey
 import org.squeryl.dsl.CompositeKey2
 
-class BinaryAssociation(
-  val ownerId: Id,
-  val owneeId: Id)
+class Association2(val ownerId: Id, val owneeId: Id)
     extends KeyedEntity[CompositeKey2[Id, Id]] {
 
   // no-arg constructor
-  def this() = this(0, 0)
+  def this() = this(defaultOf[Id], defaultOf[Id])
 
   def id: CompositeKey2[Id, Id] = compositeKey(ownerId, owneeId)
 }

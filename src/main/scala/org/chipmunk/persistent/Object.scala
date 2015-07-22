@@ -10,7 +10,7 @@ abstract class Object[T <: Object[T, O], O](val typ: Type) extends Entity[T] {
   self: T =>
 
   @Transient
-  private[this] var obj: O = _
+  private[this] var instance: O = _
 
   def this(objClass: Class[_ <: O]) = this(new Type(objClass))
 
@@ -18,16 +18,14 @@ abstract class Object[T <: Object[T, O], O](val typ: Type) extends Entity[T] {
 
   protected def getValue()(
     implicit classTag: ClassTag[O],
-    typeTag: TypeTag[O])
-  : O = {
-    if (obj == null) { obj = resolveObj() }
-    obj
+    typeTag: TypeTag[O]): O = {
+    if (instance == null) { instance = resolveObj() }
+    instance
   }
 
   private[this] def resolveObj()(
     implicit classTag: ClassTag[O],
-    typeTag: TypeTag[O])
-  : O = {
+    typeTag: TypeTag[O]): O = {
     val classNameProper = typ.classNameProper
     val moduleSymbol = currentMirror.staticModule(classNameProper)
     val moduleMirror = currentMirror.reflectModule(moduleSymbol)
@@ -36,9 +34,9 @@ abstract class Object[T <: Object[T, O], O](val typ: Type) extends Entity[T] {
     if (classTag.runtimeClass.isInstance(obj)) {
       obj.asInstanceOf[O]
     } else {
-      val tpe = typeTag.tpe
+      val expectedType = typeTag.tpe
       throw new IllegalStateException(
-        s"$classNameProper is not an instance of expected type: $tpe")
+        s"$classNameProper is not an instance of expected type: $expectedType")
     }
   }
 

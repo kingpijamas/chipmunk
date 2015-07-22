@@ -1,7 +1,7 @@
 package org.chipmunk.mock
 
-import org.chipmunk.persistent.BinaryAssociation
-import org.chipmunk.DeclaredRelation
+import org.chipmunk.persistent.Association2
+import org.chipmunk.Declaration
 import org.chipmunk.Identifiable
 import org.chipmunk.persistent
 import org.squeryl.dsl.{ ManyToMany => SManyToMany }
@@ -18,23 +18,23 @@ trait Entity[T <: persistent.Entity[T]] extends persistent.Entity[T] {
   override def isPersisted: Boolean = isMockPersisted
 
   override protected def owner[O](
-    relation: => DeclaredRelation[OneToManyRelation[T, O]])
+    relation: => Declaration[OneToManyRelation[T, O]])
   : SOneToMany[O] =
     OneToMany[O]()
 
   override protected def owner[R <: Identifiable](
-    relation: => DeclaredRelation[ManyToManyRelation[T, R, BinaryAssociation]])
-  : SManyToMany[R, BinaryAssociation] =
+    relation: => Declaration[ManyToManyRelation[T, R, Association2]])
+  : SManyToMany[R, Association2] =
     ManyToMany[R](this.id, owningSide = true)
 
   override protected def ownee[O <: Identifiable](
-    relation: => DeclaredRelation[OneToManyRelation[O, T]])
+    relation: => Declaration[OneToManyRelation[O, T]])
   : SManyToOne[O] =
     ManyToOne[O]()
 
   override protected def ownee[L <: Identifiable](
-    relation: => DeclaredRelation[ManyToManyRelation[L, T, BinaryAssociation]])
-  : SManyToMany[L, BinaryAssociation] =
+    relation: => Declaration[ManyToManyRelation[L, T, Association2]])
+  : SManyToMany[L, Association2] =
     ManyToMany[L](this.id, owningSide = false)
 
   override protected def relate[O <: Identifiable](
