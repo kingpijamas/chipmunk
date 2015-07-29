@@ -1,20 +1,26 @@
 package org.chipmunk.persistent
 
 import org.squeryl.annotations.Transient
-
 import scala.reflect.ClassTag
 import scala.reflect.runtime.currentMirror
 import scala.reflect.runtime.universe.TypeTag
+import org.squeryl.Table
+import org.chipmunk.persistent.Entity
 
-abstract class Object[T <: Object[T, O], O](val typ: Type) extends Entity[T] {
+abstract class Object[T <: Object[T, O], O](
+  table: Table[T],
+  val typ: Type)
+    extends Entity[T](table) {
   self: T =>
 
   @Transient
   private[this] var instance: O = _
 
-  def this(objClass: Class[_ <: O]) = this(new Type(objClass))
+  def this(table: Table[T], objClass: Class[_ <: O]) =
+    this(table, new Type(objClass))
 
-  def this(obj: O) = this(obj.getClass)
+  def this(table: Table[T], obj: O) =
+    this(table, obj.getClass)
 
   protected def getValue()(
     implicit classTag: ClassTag[O],

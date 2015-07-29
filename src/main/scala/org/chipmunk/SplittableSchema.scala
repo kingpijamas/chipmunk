@@ -1,8 +1,13 @@
 package org.chipmunk
 
+import scala.annotation.elidable
+import scala.annotation.elidable.ASSERTION
 import scala.collection.mutable
+
 import org.chipmunk.Identifiable.Id
-import org.chipmunk.persistent.Association2
+import org.chipmunk.SplittableSchema.ManyToManyDeclaration
+import org.chipmunk.SplittableSchema.OneToManyDeclaration
+import org.chipmunk.persistent.relation.Association2
 import org.chipmunk.persistent.Entity
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.manyToManyRelation
@@ -12,7 +17,12 @@ import org.squeryl.Table
 import org.squeryl.dsl.ManyToManyRelation
 import org.squeryl.dsl.OneToManyRelation
 import org.squeryl.dsl.{ Relation => SquerylRelation }
-import org.squeryl.dsl.ast.EqualityExpression
+
+object SplittableSchema {
+  type OneToManyDeclaration[O, M] = Declaration[OneToManyRelation[O, M]]
+  type ManyToOneDeclaration[M, O] = OneToManyDeclaration[O, M]
+  type ManyToManyDeclaration[L, R] = Declaration[ManyToManyRelation[L, R, Association2]]
+}
 
 trait SplittableSchema extends Schema {
   private[this] var relDeclarations = mutable.Buffer[Declaration[_]]()
@@ -30,7 +40,7 @@ trait SplittableSchema extends Schema {
     tableOfO: => Table[O],
     tableOfM: => Table[M])
     (joinAttr: M => Id)
-  : Declaration[OneToManyRelation[O, M]] = {
+  : OneToManyDeclaration[O, M] = {
     declare {
       oneToManyRelation(tableOfO, tableOfM).
         via((o: O, m: M) => o.id === joinAttr(m))
@@ -41,7 +51,7 @@ trait SplittableSchema extends Schema {
     tableOfL: => Table[L],
     tableOfR: => Table[R],
     tableName: String)
-  : Declaration[ManyToManyRelation[L, R, Association2]] = {
+  : ManyToManyDeclaration[L, R] = {
     declare {
       manyToManyRelation(tableOfL, tableOfR, tableName).
        via[Association2](manyToManyJoin)
@@ -51,7 +61,7 @@ trait SplittableSchema extends Schema {
   protected def manyToMany[L <: Entity[_], R <: Entity[_]](
     tableOfL: => Table[L],
     tableOfR: => Table[R])
-  : Declaration[ManyToManyRelation[L, R, Association2]] = {
+  : ManyToManyDeclaration[L, R] = {
     declare {
       manyToManyRelation(tableOfL, tableOfR).
        via[Association2](manyToManyJoin)

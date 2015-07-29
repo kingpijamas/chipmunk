@@ -1,7 +1,7 @@
 package org.chipmunk.mock
 
 import scala.collection.mutable
-import org.chipmunk.persistent.Association2
+import org.chipmunk.persistent.relation.Association2
 import org.chipmunk.mock.ManyToMany.A
 import org.squeryl.{ Query => SQuery }
 import org.squeryl.dsl.{ ManyToMany => SManyToMany }
@@ -14,7 +14,8 @@ object ManyToMany {
   def apply[O <: Identifiable](
     outerId: Id,
     owningSide: Boolean,
-    values: (O, A)*): SManyToMany[O, A] =
+    values: (O, A)*)
+  : SManyToMany[O, A] =
     new ManyToMany[O](outerId, owningSide, mutable.Map() ++= values)
 }
 

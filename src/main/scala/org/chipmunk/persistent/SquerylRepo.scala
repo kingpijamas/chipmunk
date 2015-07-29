@@ -6,6 +6,7 @@ import org.squeryl.PrimitiveTypeMode.from
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.where
 import org.squeryl.Table
+import org.chipmunk.persistent.Entity
 
 abstract class SquerylRepo[T <: Entity[T]] extends Repository[T] {
   protected def table: Table[T]

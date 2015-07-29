@@ -1,6 +1,6 @@
 package org.chipmunk.mock
 
-import org.chipmunk.persistent.Association2
+import org.chipmunk.persistent.relation.Association2
 import org.chipmunk.Declaration
 import org.chipmunk.Identifiable
 import org.chipmunk.persistent
@@ -10,7 +10,7 @@ import org.squeryl.dsl.{ ManyToOne => SManyToOne }
 import org.squeryl.dsl.{ OneToMany => SOneToMany }
 import org.squeryl.dsl.OneToManyRelation
 
-trait Entity[T <: persistent.Entity[T]] extends persistent.Entity[T] {
+trait Entity[T <: org.chipmunk.persistent.Entity[T]] extends org.chipmunk.persistent.Entity[T] {
   self: T =>
 
   private[mock] var isMockPersisted: Boolean = false
@@ -41,8 +41,6 @@ trait Entity[T <: persistent.Entity[T]] extends persistent.Entity[T] {
     relation: SOneToMany[O],
     other: O)
   : Unit = {
-    failIfNotPersisted()
-
     relation.assign(other)
   }
 
@@ -50,8 +48,6 @@ trait Entity[T <: persistent.Entity[T]] extends persistent.Entity[T] {
     relation: SManyToMany[O, _],
     other: O)
   : Unit = {
-    failIfNotPersisted()
-
     relation.assign(other)
   }
 }
