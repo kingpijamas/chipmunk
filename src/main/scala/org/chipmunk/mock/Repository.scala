@@ -4,6 +4,7 @@ import java.sql.SQLException
 import scala.collection.mutable
 import org.chipmunk.persistent
 import org.chipmunk.Identifiable.Id
+import org.chipmunk.persistent.Entity
 
 object Repository {
   def apply[M <: Entity[_]](mockEntities: M*): persistent.Repository[M] = {
@@ -19,7 +20,6 @@ private class Repository[M <: Entity[_]](elems: mutable.Set[M])
   def remove(elem: M): Int = {
     if (!elems.remove(elem)) { throw new SQLException() }
 
-    elem.isMockPersisted = false // TODO:check!
     1 // # of elems removed
   }
 
@@ -29,7 +29,6 @@ private class Repository[M <: Entity[_]](elems: mutable.Set[M])
     if (elems.contains(elem)) { throw new SQLException() }
 
     elems += elem
-    elem.isMockPersisted = true // TODO:check!
     elem
   }
 }

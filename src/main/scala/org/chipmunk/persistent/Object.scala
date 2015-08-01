@@ -5,7 +5,6 @@ import scala.reflect.ClassTag
 import scala.reflect.runtime.currentMirror
 import scala.reflect.runtime.universe.TypeTag
 import org.squeryl.Table
-import org.chipmunk.persistent.Entity
 
 abstract class Object[T <: Object[T, O], O](
   table: Table[T],

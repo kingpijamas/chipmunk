@@ -1,6 +1,15 @@
 package org.chipmunk.persistent.relation
 
 import org.chipmunk.persistent.Entity
-import org.squeryl.dsl.{ ManyToOne => SManyToOne }
+import org.squeryl.dsl.{ ManyToOne => SM2O }
+import org.chipmunk.persistent.relation.ManyToOne.SManyToOne
 
-trait ManyToOne[O <: Entity[_]] extends Relation[O, SManyToOne[O]]
+object ManyToOne {
+  type SManyToOne[O <: Entity[_]] = SM2O[O]
+}
+
+trait ManyToOne[O <: Entity[_]] extends Relation[O] {
+  final type SRel = SManyToOne[O]
+
+  def removeAll(): Unit = { query.delete }
+}

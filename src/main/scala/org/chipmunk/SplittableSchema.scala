@@ -1,14 +1,12 @@
 package org.chipmunk
 
-import scala.annotation.elidable
-import scala.annotation.elidable.ASSERTION
 import scala.collection.mutable
 
 import org.chipmunk.Identifiable.Id
 import org.chipmunk.SplittableSchema.ManyToManyDeclaration
 import org.chipmunk.SplittableSchema.OneToManyDeclaration
-import org.chipmunk.persistent.relation.Association2
 import org.chipmunk.persistent.Entity
+import org.chipmunk.persistent.relation.Association2
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.manyToManyRelation
 import org.squeryl.PrimitiveTypeMode.oneToManyRelation
@@ -19,9 +17,13 @@ import org.squeryl.dsl.OneToManyRelation
 import org.squeryl.dsl.{ Relation => SquerylRelation }
 
 object SplittableSchema {
-  type OneToManyDeclaration[O, M] = Declaration[OneToManyRelation[O, M]]
-  type ManyToOneDeclaration[M, O] = OneToManyDeclaration[O, M]
-  type ManyToManyDeclaration[L, R] = Declaration[ManyToManyRelation[L, R, Association2]]
+  type OneToManyDeclaration[O <: Identifiable, M] =
+    Declaration[OneToManyRelation[O, M]]
+
+  type ManyToOneDeclaration[M, O <: Identifiable] = OneToManyDeclaration[O, M]
+
+  type ManyToManyDeclaration[L <: Identifiable, R <: Identifiable] =
+    Declaration[ManyToManyRelation[L, R, Association2]]
 }
 
 trait SplittableSchema extends Schema {

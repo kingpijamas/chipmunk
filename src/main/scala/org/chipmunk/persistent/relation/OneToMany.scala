@@ -1,9 +1,18 @@
 package org.chipmunk.persistent.relation
 
 import org.chipmunk.persistent.Entity
-import org.squeryl.dsl.{ OneToMany => SOneToMany }
+import org.squeryl.dsl.{ OneToMany => SO2M }
 
-trait OneToMany[O <: Entity[_]] extends Relation[O, SOneToMany[O]] {
+object OneToMany {
+  type SOneToMany[O] = SO2M[O]
+}
+
+trait OneToMany[O <: Entity[_]] extends Relation[O] {
+  final type SRel = OneToMany.SOneToMany[O]
+
+  def add(other: O): Unit = { query.associate(other) }
   def add(others: O*): Unit = { others foreach { add(_) } }
-//  def remove(others: O*): Unit
+
+  def removeAll(): Unit = { query.deleteAll }
+  //  def remove(others: O*): Unit
 }

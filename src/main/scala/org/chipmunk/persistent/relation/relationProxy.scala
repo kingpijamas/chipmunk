@@ -29,28 +29,30 @@ import org.squeryl.Query
 //  def persist(): Unit
 //}
 
-trait RelationProxy[O <: Entity[_], SRel <: Query[O]] {
-  self: Relation[O, SRel] =>
+trait RelationProxy[O <: Entity[_]] {
+  self: Relation[O] =>
 
   def isDirty: Boolean
 
-  def persist(): RelationProxy[O, SRel]
+  def persist(): RelationProxy[O]
+
+  final def query: SRel = rel
+
+  protected[this] def rel: SRel
 }
 
-protected[relation] trait TransientLike[O <: Entity[_], SRel <: Query[O]]
-    extends RelationProxy[O, SRel] {
-  self: Relation[O, SRel] =>
+protected[relation] trait TransientLike[O <: Entity[_]]
+    extends RelationProxy[O] {
+  self: Relation[O] =>
 
-  def isDirty: Boolean = !cacheRel.isEmpty
-
-  protected[this] def cacheRel: SRel
+  final def isDirty: Boolean = !rel.isEmpty
 }
 
-protected[relation] trait PersistentLike[O <: Entity[_], SRel <: Query[O]]
-    extends RelationProxy[O, SRel] {
-  self: Relation[O, SRel] =>
+protected[relation] trait PersistentLike[O <: Entity[_]]
+    extends RelationProxy[O] {
+  self: Relation[O] =>
 
-  def isDirty: Boolean = false
+  final def isDirty: Boolean = false
 
-  def persist(): PersistentLike[O, SRel] = this
+  final def persist(): this.type = this
 }
