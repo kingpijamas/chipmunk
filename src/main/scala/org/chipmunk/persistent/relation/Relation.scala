@@ -10,7 +10,7 @@ trait Relation[O <: Entity[_]] extends Iterable[O] {
 
   def removeAll(): Unit
 
-  def query: SRel
+  def toSqueryl: SRel
 
-  def iterator: Iterator[O] = query.iterator
+  def iterator: Iterator[O] = toSqueryl.iterator
 }

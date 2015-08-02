@@ -14,8 +14,7 @@ object OneToManyImpl {
 
   def apply[O <: Entity[_]](
     actualRel: SOneToMany[O],
-    rel: SOneToMany[O] = mock.OneToMany[O]())
-  : OneToManyImpl[O] =
+    rel: SOneToMany[O] = mock.OneToMany[O]()): OneToManyImpl[O] =
     new TransientOneToMany[O](actualRel, rel)
 }
 
@@ -27,9 +26,11 @@ private class TransientOneToMany[O <: Entity[_]](
   def persist(): PersistentOneToMany[O] = {
     if (isDirty) {
       rel foreach { other =>
-        if (!other.isPersisted) {
-          other.persistBody()
-        }
+        // TODO: CHECK!!! apparently this is not necessary for the
+        // case where the many part is unrelated (it'll probably fail for the rest)
+        // if (!other.isPersisted) {
+        //    other.persistBody()
+        // }
         actualRel.associate(other)
       }
     }

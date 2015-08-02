@@ -12,8 +12,8 @@ import scala.annotation.meta.field
 object ManyToManyImpl {
   type ManyToManyImpl[O <: Entity[_]] = ManyToMany[O] with RelationProxy[O]
 
-  def apply[E <: Entity[_], O <: Entity[_]](
-    owner: E,
+  def apply[O <: Entity[_]](
+    owner: Entity[_],
     owningSide: Boolean,
     actualRel: SManyToMany[O])
   : ManyToManyImpl[O] = {

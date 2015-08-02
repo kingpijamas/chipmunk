@@ -11,5 +11,5 @@ object ManyToOne {
 trait ManyToOne[O <: Entity[_]] extends Relation[O] {
   final type SRel = SManyToOne[O]
 
-  def removeAll(): Unit = { query.delete }
+  def removeAll(): Unit = { toSqueryl.delete }
 }

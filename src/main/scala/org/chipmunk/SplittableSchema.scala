@@ -2,7 +2,6 @@ package org.chipmunk
 
 import scala.collection.mutable
 
-import org.chipmunk.Identifiable.Id
 import org.chipmunk.SplittableSchema.ManyToManyDeclaration
 import org.chipmunk.SplittableSchema.OneToManyDeclaration
 import org.chipmunk.persistent.Entity
@@ -13,6 +12,7 @@ import org.squeryl.PrimitiveTypeMode.oneToManyRelation
 import org.squeryl.Schema
 import org.squeryl.Table
 import org.squeryl.dsl.ManyToManyRelation
+import org.squeryl.dsl.NumericalExpression
 import org.squeryl.dsl.OneToManyRelation
 import org.squeryl.dsl.{ Relation => SquerylRelation }
 
@@ -41,11 +41,11 @@ trait SplittableSchema extends Schema {
   protected def oneToMany[O <: Entity[_], M](
     tableOfO: => Table[O],
     tableOfM: => Table[M])
-    (joinAttr: M => Id)
+    (joinAttr: M => NumericalExpression[_])
   : OneToManyDeclaration[O, M] = {
     declare {
       oneToManyRelation(tableOfO, tableOfM).
-        via((o: O, m: M) => o.id === joinAttr(m))
+        via((o: O, m: M) => { o.id === joinAttr(m) })
     }
   }
 
@@ -88,7 +88,7 @@ trait SplittableSchema extends Schema {
 }
 
 class Declaration[R <: SquerylRelation[_, _]](rel: => R) {
-  private[this] var _rel: Option[R] = _
+  private[this] var _rel: Option[R] = None
 
   private[chipmunk] def init(): Unit = {
     _rel = Option(rel)

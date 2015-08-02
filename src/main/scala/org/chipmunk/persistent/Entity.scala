@@ -28,7 +28,7 @@ abstract class Entity[T <: Entity[T]](table: Table[T])
 
   protected def owner[R <: Entity[_]](
     decl: => ManyToManyDeclaration[T, R]): ManyToMany[R] = {
-    subscribe(ManyToManyImpl[T, R](this, true, decl.value.left(this)))
+    subscribe(ManyToManyImpl[R](this, true, decl.value.left(this)))
   }
 
   protected def ownee[O <: Entity[_]](
@@ -39,7 +39,7 @@ abstract class Entity[T <: Entity[T]](table: Table[T])
 
   protected def ownee[L <: Entity[_]](
     decl: => ManyToManyDeclaration[L, T]): ManyToMany[L] = {
-    subscribe(ManyToManyImpl[T, L](this, false, decl.value.right(this)))
+    subscribe(ManyToManyImpl[L](this, false, decl.value.right(this)))
   }
 
   private[this] def subscribe[R <: RelationProxy[_]](rel: R): R = {
@@ -47,19 +47,15 @@ abstract class Entity[T <: Entity[T]](table: Table[T])
     rel
   }
 
-  protected def relate[O <: Entity[_]](
-    relation: OneToMany[O], other: O): Unit = {
-    relation.add(other)
-  }
-
-  protected def relate[O <: Entity[_]](
-    relation: ManyToMany[O], other: O): Unit = {
-    relation.add(other)
-  }
-
   private[persistent] def persistBody(): Unit = { table.insertOrUpdate(this) }
 
   private[persistent] def persistRelations(): Unit = {
-    relations foreach { _.persist() }
+    relations transform { _.persist() }
+  }
+
+  private[persistent] def persist(): Unit = {
+    //FIXME: here's where the cascading save should be put
+    persistBody()
+    persistRelations()
   }
 }

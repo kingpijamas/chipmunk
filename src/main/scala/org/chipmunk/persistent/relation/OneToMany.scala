@@ -10,9 +10,9 @@ object OneToMany {
 trait OneToMany[O <: Entity[_]] extends Relation[O] {
   final type SRel = OneToMany.SOneToMany[O]
 
-  def add(other: O): Unit = { query.associate(other) }
+  def add(other: O): Unit = { toSqueryl.associate(other) }
   def add(others: O*): Unit = { others foreach { add(_) } }
 
-  def removeAll(): Unit = { query.deleteAll }
+  def removeAll(): Unit = { toSqueryl.deleteAll }
   //  def remove(others: O*): Unit
 }
