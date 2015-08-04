@@ -1,11 +1,10 @@
 package org.chipmunk
 
 import scala.collection.mutable
-
 import org.chipmunk.SplittableSchema.ManyToManyDeclaration
 import org.chipmunk.SplittableSchema.OneToManyDeclaration
-import org.chipmunk.persistent.Entity
-import org.chipmunk.persistent.relation.Association2
+import org.chipmunk.entity.Entity
+import org.chipmunk.relation.Association2
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.manyToManyRelation
 import org.squeryl.PrimitiveTypeMode.oneToManyRelation
@@ -15,6 +14,7 @@ import org.squeryl.dsl.ManyToManyRelation
 import org.squeryl.dsl.NumericalExpression
 import org.squeryl.dsl.OneToManyRelation
 import org.squeryl.dsl.{ Relation => SquerylRelation }
+import org.chipmunk.entity.Identifiable
 
 object SplittableSchema {
   type OneToManyDeclaration[O <: Identifiable, M] =
@@ -75,8 +75,7 @@ trait SplittableSchema extends Schema {
       (l.id === a.ownerId, a.owneeId === r.id)
 
   private[this] def declare[R <: SquerylRelation[_, _]](
-      rel: => R)
-  : Declaration[R] = {
+    rel: => R): Declaration[R] = {
     val declaration = new Declaration(rel)
     relDeclarations += declaration
     declaration
