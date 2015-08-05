@@ -9,8 +9,6 @@ import org.chipmunk.test.Transactions
 import org.chipmunk.TestSchema
 
 class EntitySpec extends fixture.FlatSpec with TestSchema with Transactions with InMemoryDb {
-  case class FixtureParam(dogSpecies: Species, dogX: Animal, dogY: Animal, dogZ: Animal)
-
   "An Entity x" should "be creatable outside transactions" in { f => }
 
   it should "be relatable outside transactions" in { f =>
@@ -77,4 +75,6 @@ class EntitySpec extends fixture.FlatSpec with TestSchema with Transactions with
     val theFixture = FixtureParam(dogSpecies, barky, barkette, barko)
     withFixture(test.toNoArgTest(theFixture))
   }
+
+  case class FixtureParam(dogSpecies: Species, dogX: Animal, dogY: Animal, dogZ: Animal)
 }

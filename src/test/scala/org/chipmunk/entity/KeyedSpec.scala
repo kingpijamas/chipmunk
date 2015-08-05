@@ -1,49 +1,46 @@
 package org.chipmunk.entity
 
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.FlatSpec
+import org.scalatest.fixture
 
-class KeyedSpec extends FlatSpec with MockFactory {
-  private[this] val SomeNumber = 3
-
+class KeyedSpec extends fixture.FlatSpec {
   // reflexivity
-  "An EntityLike x" should "return true on equals(x)" in {
-    val ex = new EntityA(SomeNumber)
-
-    assert(ex == ex)
+  "An EntityLike x" should "return true on equals(x)" in { f =>
+    assert(f.ex == f.ex)
   }
 
   // symmetry
-  it should "should return false on equals(y) if y is null" in {
-    val ex = new EntityA(SomeNumber)
-
-    assert(ex != null)
+  it should "should return false on equals(y) if y is null" in { f =>
+    assert(f.ex != null)
   }
 
-  it should "should return true on equals(y) if y.equals(x) returns true" in {
-    val ex = new EntityA(SomeNumber)
-    val ey = new EntityA(SomeNumber)
-
-    assert(ey == ex && ex == ey)
+  it should "should return true on equals(y) if y.equals(x) returns true" in { f =>
+    assert(f.ey == f.ex && f.ex == f.ey)
   }
 
-  it should "should return false on equals(y) if y.equals(x) returns false" in {
-    val ex = new EntityA(SomeNumber)
-    val ey = new EntityA(SomeNumber + 1)
+  it should "should return false on equals(y) if y.equals(x) returns false" in { f =>
+    val ey = new EntityA(f.ex.value + 1)
 
-    assert(ey != ex && ex != ey)
+    assert(ey != f.ex && f.ex != ey)
   }
 
   // transitivity
-  it should "should return true on equals(z) if x.equals(y) and y.equals(z)" in {
-    val ex = new EntityA(SomeNumber)
-    val ey = new EntityA(SomeNumber)
-    val ez = new EntityA(SomeNumber)
-
-    assert(ex == ey && ey == ez && ex == ez)
+  it should "should return true on equals(z) if x.equals(y) and y.equals(z)" in { f =>
+    assert(f.ex == f.ey && f.ey == f.ez && f.ex == f.ez)
   }
 
-  private[this] class EntityA(val x: Int) extends Keyed {
-    protected def keys: Product = Tuple1(x)
+  protected def withFixture(test: OneArgTest) = {
+    val value = 3
+    val ex = new EntityA(value)
+    val ey = new EntityA(value)
+    val ez = new EntityA(value)
+
+    val theFixture = FixtureParam(ex, ey, ez)
+    withFixture(test.toNoArgTest(theFixture))
+  }
+
+  case class FixtureParam(ex: EntityA, ey: EntityA, ez: EntityA)
+
+  class EntityA(val value: Int) extends Keyed {
+    protected def keys: Product = Tuple1(value)
   }
 }
