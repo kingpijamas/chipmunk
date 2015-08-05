@@ -10,7 +10,6 @@ object ManyToOne {
 
 trait ManyToOne[O <: Entity[_]] extends Relation[O] {
   final type SRel = SManyToOne[O]
-
   // FIXME: this should actually add the element
   def add(other: O): Unit = { toSqueryl.assign(other) }
 

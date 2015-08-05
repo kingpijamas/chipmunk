@@ -1,10 +1,10 @@
 package org.chipmunk
 
-import org.chipmunk.TestSchema._
 import org.chipmunk.entity.Entity
 import org.chipmunk.entity.Identifiable.Id
 import org.chipmunk.types.Defaultable.DefaultableLong
 import org.chipmunk.types.Defaultable.defaultOf
+import org.scalatest.Finders
 import org.scalatest.Suite
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.optionLong2ScalarLong
@@ -69,7 +69,7 @@ object TestSchema {
 
     def addChildren(children: Animal*): Unit = {
       this.children.add(children: _*)
-      children foreach { _.parent.toSqueryl.assign(this) }
+      children foreach { _.parent.add(this) }
     }
 
     def addFriends(friends: Animal*): Unit = {
@@ -84,7 +84,7 @@ object TestSchema {
 
     def add(animal: Animal): Unit = {
       animals.add(animal)
-      animal.species.toSqueryl.assign(this)
+      animal.species.add(this)
     }
   }
 

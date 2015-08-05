@@ -14,8 +14,7 @@ object ManyToOneImpl {
 
   def apply[O <: Entity[_]](
     actualRel: SManyToOne[O],
-    rel: SManyToOne[O] = mock.ManyToOne[O]())
-  : ManyToOneImpl[O] =
+    rel: SManyToOne[O] = mock.ManyToOne[O]()): ManyToOneImpl[O] =
     new TransientManyToOne[O](actualRel, rel)
 }
 
@@ -24,9 +23,14 @@ private class TransientManyToOne[O <: Entity[_]](
   @(transient @field) val rel: SManyToOne[O])
     extends ManyToOne[O] with TransientLike[O] {
 
-  // do nothing, as per squeryl's ManyToOne limitations,
-  // the one responsible for persisting ManyToOnes is the OneToMany
-  def persist(): PersistentManyToOne[O] = new PersistentManyToOne[O](actualRel)
+  def persist(): PersistentManyToOne[O] = {
+    // FIXME: far from ideal, but will work if the O2M on
+    // the other side is used correctly
+    if (isDirty) {
+      actualRel foreach { _.persistBody() }
+    }
+    new PersistentManyToOne[O](actualRel)
+  }
 }
 
 private class PersistentManyToOne[O <: Entity[_]](
