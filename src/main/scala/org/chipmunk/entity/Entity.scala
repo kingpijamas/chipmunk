@@ -9,11 +9,14 @@ import org.chipmunk.relation.ManyToOne
 import org.chipmunk.relation.OneToMany
 import org.chipmunk.relation.RelationProxy
 import org.chipmunk.relation.persistent.ManyToManyImpl
-import org.squeryl.Table
 import org.chipmunk.relation.persistent.ManyToOneImpl
 import org.chipmunk.relation.persistent.OneToManyImpl
+import org.squeryl.PrimitiveTypeMode.inTransaction
+import org.squeryl.Table
+import scala.annotation.meta.field
 
-abstract class Entity[T <: Entity[T]](table: Table[T])
+abstract class Entity[T <: Entity[T]](
+  @(transient @field) private[chipmunk] val table: Table[T])
     extends Identifiable with Keyed {
   self: T =>
 
@@ -31,8 +34,7 @@ abstract class Entity[T <: Entity[T]](table: Table[T])
 
   protected def ownee[O <: Entity[_]](
     decl: => ManyToOneDeclaration[T, O]): ManyToOne[O] = {
-    val rel = decl.value
-    subscribe(ManyToOneImpl[O](rel.right(this)))
+    subscribe(ManyToOneImpl[O](decl.value.right(this)))
   }
 
   protected def ownee[L <: Entity[_]](
@@ -52,8 +54,10 @@ abstract class Entity[T <: Entity[T]](table: Table[T])
   }
 
   private[chipmunk] def persist(): Unit = {
-    //FIXME: here's where the cascading save should be put
-    persistBody()
-    persistRelations()
+    inTransaction {
+      //FIXME: here's where the cascading save should be put
+      persistBody()
+      persistRelations()
+    }
   }
 }

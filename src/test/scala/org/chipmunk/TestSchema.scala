@@ -53,7 +53,10 @@ object TestSchema {
     var speciesId: Option[Id] = None,
     var parentId: Option[Id] = None)
       extends Entity[Animal](Schema.animals) {
-    def this() = this(defaultOf[String], defaultOf[Option[Id]], defaultOf[Option[Id]])
+    def this() = this(
+      defaultOf[String],
+      defaultOf[Option[Id]],
+      defaultOf[Option[Id]])
 
     def keys: Product1[String] = Tuple1(name)
 
@@ -88,8 +91,7 @@ object TestSchema {
     }
   }
 
-  class Habitat(val name: String)
-      extends Entity[Habitat](Schema.habitats) {
+  class Habitat(val name: String) extends Entity[Habitat](Schema.habitats) {
     def keys: Product1[String] = Tuple1(name)
 
     lazy val animals = ownee(Schema.animals2Habitats)

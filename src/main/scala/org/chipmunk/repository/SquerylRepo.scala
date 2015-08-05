@@ -20,10 +20,14 @@ abstract class SquerylRepo[T <: Entity[_]] extends Repository[T] {
    * Note that this method *ONLY CHECKS elem's id, IT DOES NOT CHECK THE DB*
    */
   def save(elem: T): T = {
+    val elemsTable = elem.table
+    assume(elemsTable eq table, s"Cannot save $elem in $table, it belongs to $elemsTable")
     table.insertOrUpdate(elem)
   }
 
   def remove(elem: T): Int = {
+    val elemsTable = elem.table
+    assume(elemsTable eq table, s"Cannot remove $elem from $table, it belongs to $elemsTable")
     table.deleteWhere(_.id === elem.id)
   }
 }
