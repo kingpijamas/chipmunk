@@ -7,8 +7,9 @@ import org.scalatest.FlatSpec
 import org.scalatest.fixture
 import org.chipmunk.test.Transactions
 import org.chipmunk.TestSchema
+import org.chipmunk.DbSpec
 
-class EntitySpec extends fixture.FlatSpec with TestSchema with Transactions with InMemoryDb {
+class EntitySpec extends DbSpec {
   "An Entity x" should "be creatable outside transactions" in { f => }
 
   it should "be relatable outside transactions" in { f =>

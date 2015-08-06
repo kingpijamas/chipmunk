@@ -10,6 +10,7 @@ import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.optionLong2ScalarLong
 import org.squeryl.PrimitiveTypeMode.string2ScalarString
 import org.squeryl.Schema
+import org.squeryl.Table
 
 trait TestSchema {
   self: Suite =>
@@ -51,8 +52,9 @@ object TestSchema {
   class Animal(
     val name: String,
     var speciesId: Option[Id] = None,
-    var parentId: Option[Id] = None)
-      extends Entity[Animal](Schema.animals) {
+    var parentId: Option[Id] = None,
+    table: Table[Animal] = Schema.animals)
+      extends Entity[Animal](table) {
     def this() = this(
       defaultOf[String],
       defaultOf[Option[Id]],
