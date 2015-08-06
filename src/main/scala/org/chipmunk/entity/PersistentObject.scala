@@ -7,7 +7,7 @@ import scala.reflect.runtime.universe.TypeTag
 import org.squeryl.Table
 import org.chipmunk.types.Type
 
-abstract class Object[T <: Object[T, O], O](
+abstract class PersistentObject[T <: PersistentObject[T, O], O](
   table: Table[T],
   val typ: Type)
     extends Entity[T](table) {
