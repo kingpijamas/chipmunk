@@ -1,4 +1,4 @@
-package org.chipmunk.relation
+package org.chipmunk.entity.relation
 
 import org.chipmunk.entity.Identifiable.Id
 import org.chipmunk.types.Defaultable.DefaultableLong

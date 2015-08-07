@@ -11,6 +11,7 @@ import org.squeryl.PrimitiveTypeMode.optionLong2ScalarLong
 import org.squeryl.PrimitiveTypeMode.string2ScalarString
 import org.squeryl.Schema
 import org.squeryl.Table
+import org.chipmunk.schema.SplittableSchema
 
 trait TestSchema {
   self: Suite =>

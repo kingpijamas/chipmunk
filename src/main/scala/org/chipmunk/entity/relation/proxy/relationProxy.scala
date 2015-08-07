@@ -1,7 +1,7 @@
-package org.chipmunk.relation
+package org.chipmunk.entity.relation.proxy
 
 import org.chipmunk.entity.Entity
-import org.squeryl.Query
+import org.chipmunk.entity.relation.Relation
 
 trait RelationProxy[O <: Entity[_]] {
   self: Relation[O] =>

@@ -1,16 +1,16 @@
 package org.chipmunk.entity
 
 import scala.collection.mutable
-import org.chipmunk.SplittableSchema.ManyToManyDeclaration
-import org.chipmunk.SplittableSchema.ManyToOneDeclaration
-import org.chipmunk.SplittableSchema.OneToManyDeclaration
-import org.chipmunk.relation.ManyToMany
-import org.chipmunk.relation.ManyToOne
-import org.chipmunk.relation.OneToMany
-import org.chipmunk.relation.RelationProxy
-import org.chipmunk.relation.persistent.ManyToManyImpl
-import org.chipmunk.relation.persistent.ManyToOneImpl
-import org.chipmunk.relation.persistent.OneToManyImpl
+import org.chipmunk.entity.relation.ManyToMany
+import org.chipmunk.entity.relation.ManyToOne
+import org.chipmunk.entity.relation.OneToMany
+import org.chipmunk.entity.relation.proxy.ManyToManyProxy
+import org.chipmunk.entity.relation.proxy.ManyToOneProxy
+import org.chipmunk.entity.relation.proxy.OneToManyProxy
+import org.chipmunk.entity.relation.proxy.RelationProxy
+import org.chipmunk.schema.SplittableSchema.ManyToManyDeclaration
+import org.chipmunk.schema.SplittableSchema.ManyToOneDeclaration
+import org.chipmunk.schema.SplittableSchema.OneToManyDeclaration
 import org.squeryl.PrimitiveTypeMode.inTransaction
 import org.squeryl.Table
 import scala.annotation.meta.field
@@ -24,22 +24,22 @@ abstract class Entity[T <: Entity[T]](
 
   protected def owner[M <: Entity[_]](
     decl: => OneToManyDeclaration[T, M]): OneToMany[M] = {
-    subscribe(OneToManyImpl[M](decl.value.left(this)))
+    subscribe(OneToManyProxy[M](decl.value.left(this)))
   }
 
   protected def owner[R <: Entity[_]](
     decl: => ManyToManyDeclaration[T, R]): ManyToMany[R] = {
-    subscribe(ManyToManyImpl[R](this, true, decl.value.left(this)))
+    subscribe(ManyToManyProxy[R](this, true, decl.value.left(this)))
   }
 
   protected def ownee[O <: Entity[_]](
     decl: => ManyToOneDeclaration[T, O]): ManyToOne[O] = {
-    subscribe(ManyToOneImpl[O](decl.value.right(this)))
+    subscribe(ManyToOneProxy[O](decl.value.right(this)))
   }
 
   protected def ownee[L <: Entity[_]](
     decl: => ManyToManyDeclaration[L, T]): ManyToMany[L] = {
-    subscribe(ManyToManyImpl[L](this, false, decl.value.right(this)))
+    subscribe(ManyToManyProxy[L](this, false, decl.value.right(this)))
   }
 
   private[this] def subscribe[R <: RelationProxy[_]](rel: R): R = {
@@ -47,7 +47,7 @@ abstract class Entity[T <: Entity[T]](
     rel
   }
 
-  private[chipmunk] def persistBody(): Unit = { table.insertOrUpdate(this) }
+  private[entity] def persistBody(): Unit = { table.insertOrUpdate(this) }
 
   private[entity] def persistRelations(): Unit = {
     relations transform { _.persist() }

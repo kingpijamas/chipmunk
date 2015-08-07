@@ -1,11 +1,11 @@
-package org.chipmunk.relation.mock
+package org.chipmunk.entity.relation.mock
 
 import scala.collection.mutable
 
 import org.chipmunk.entity.Identifiable
 import org.chipmunk.entity.Identifiable.Id
-import org.chipmunk.relation.Association2
-import org.chipmunk.relation.mock.ManyToMany.A
+import org.chipmunk.entity.relation.Association2
+import org.chipmunk.entity.relation.mock.ManyToMany.A
 import org.squeryl.dsl.{ ManyToMany => SManyToMany }
 
 object ManyToMany {
@@ -23,7 +23,7 @@ private class ManyToMany[O <: Identifiable](
   outerId: Id,
   owningSide: Boolean,
   values: mutable.Map[O, A])
-    extends TransientQuery[O] with SManyToMany[O, A] {
+    extends Query[O] with SManyToMany[O, A] {
 
   def iterable: Iterable[O] = values map { _._1 }
 
@@ -46,11 +46,11 @@ private class ManyToMany[O <: Identifiable](
 
   def associate(o: O, a: A): Association2 = { assign(o, a) }
 
-  def associationMap: TransientQuery[(O, A)] = new TransientQuery[(O, A)] {
+  def associationMap: Query[(O, A)] = new Query[(O, A)] {
     def iterable: Iterable[(O, A)] = values
   }
 
-  def associations: TransientQuery[A] = new TransientQuery[A] {
+  def associations: Query[A] = new Query[A] {
     def iterable: Iterable[A] = values map { _._2 }
   }
 

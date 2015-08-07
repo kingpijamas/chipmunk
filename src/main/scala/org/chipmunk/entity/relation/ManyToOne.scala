@@ -1,7 +1,7 @@
-package org.chipmunk.relation
+package org.chipmunk.entity.relation
 
 import org.chipmunk.entity.Entity
-import org.chipmunk.relation.ManyToOne.SManyToOne
+import org.chipmunk.entity.relation.ManyToOne.SManyToOne
 import org.squeryl.dsl.{ ManyToOne => SM2O }
 
 object ManyToOne {

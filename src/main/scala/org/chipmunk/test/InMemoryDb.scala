@@ -1,6 +1,6 @@
 package org.chipmunk.test
 
-import org.chipmunk.Configurator
+import org.chipmunk.util.Configurator
 import org.chipmunk.test.InMemoryDb.Adapter
 import org.chipmunk.test.InMemoryDb.DriverClass
 import org.h2.Driver

@@ -1,4 +1,4 @@
-package org.chipmunk.relation
+package org.chipmunk.entity.relation
 
 import org.squeryl.Query
 import org.chipmunk.entity.Entity

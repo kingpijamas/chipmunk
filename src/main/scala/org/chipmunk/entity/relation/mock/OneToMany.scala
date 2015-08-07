@@ -1,6 +1,5 @@
-package org.chipmunk.relation.mock
+package org.chipmunk.entity.relation.mock
 
-import scala.annotation.implicitNotFound
 import scala.collection.mutable
 
 import org.squeryl.KeyedEntity
@@ -12,7 +11,7 @@ object OneToMany {
 }
 
 private class OneToMany[M](values: mutable.Set[M])
-    extends TransientQuery[M] with SOneToMany[M] {
+    extends Query[M] with SOneToMany[M] {
 
   def iterable: Iterable[M] = values
 

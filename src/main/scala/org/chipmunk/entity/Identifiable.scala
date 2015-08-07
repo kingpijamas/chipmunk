@@ -7,6 +7,7 @@ object Identifiable {
   type Id = Long
 }
 
+//TODO: could use Defaultable here!
 trait Identifiable extends KeyedEntity[Id] {
   /*
    * cannot just be hidden or a val, or else it will not be

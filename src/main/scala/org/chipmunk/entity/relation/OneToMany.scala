@@ -1,4 +1,4 @@
-package org.chipmunk.relation
+package org.chipmunk.entity.relation
 
 import org.chipmunk.entity.Entity
 import org.squeryl.dsl.{ OneToMany => SO2M }

@@ -1,11 +1,12 @@
-package org.chipmunk
+package org.chipmunk.util
 
 import java.sql.DriverManager
+import java.sql.Driver
+
+import org.squeryl.PrimitiveTypeMode.inTransaction
 import org.squeryl.Session
 import org.squeryl.SessionFactory
-import java.sql.Driver
 import org.squeryl.internals.DatabaseAdapter
-import org.squeryl.PrimitiveTypeMode.inTransaction
 
 object Configurator {
   def initialize(
