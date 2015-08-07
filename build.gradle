@@ -69,6 +69,8 @@ tasks.withType(ScalaCompile) {
 	]
 }
 
+test { maxParallelForks = 1 } // FIXME not ideal, but there are thread-unsafe tests
+
 scalaStyle {
 	configLocation = "/src/test/resources/scalastyle-config.xml"
 	includeTestSourceDirectory = true

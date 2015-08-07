@@ -27,8 +27,10 @@ trait InMemoryDb extends BeforeAndAfterEach {
     super.beforeEach()
   }
 
-  protected def dbUrl(dbName: String = getClass.getSimpleName): String =
-    s"jdbc:h2:mem:$dbName;DB_CLOSE_DELAY=-1"
+  protected def dbUrl(dbName: String = getClass.getSimpleName): String = {
+    val currThreadId = Thread.currentThread.getId
+    s"jdbc:h2:mem:$dbName$currThreadId;DB_CLOSE_DELAY=-1"
+  }
 
   override def afterEach(): Unit = {
     try {
