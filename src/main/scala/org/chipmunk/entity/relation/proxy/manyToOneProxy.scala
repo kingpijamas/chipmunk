@@ -25,7 +25,8 @@ private class TransientM2OProxy[O <: Entity[_]](
     // FIXME: far from ideal, but will work if the O2M on
     // the other side is used correctly
     if (isDirty) {
-      actualRel foreach { _.persistBody() }
+      //TODO: this line below assumes a non-standard behavior only mock.ManyToOne has!
+      rel foreach { _.persistBody() }
     }
     new PersistentM2OProxy[O](actualRel)
   }

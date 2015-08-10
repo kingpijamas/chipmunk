@@ -5,8 +5,7 @@ import org.chipmunk.TestSchema.Species
 import org.chipmunk.test.InMemoryDb
 import org.scalatest.FlatSpec
 import org.scalatest.fixture
-import org.chipmunk.test.Transactions
-import org.chipmunk.TestSchema
+import org.chipmunk.test.fixture.Transactions
 import org.chipmunk.DbSpec
 
 class EntitySpec extends DbSpec {
@@ -14,6 +13,11 @@ class EntitySpec extends DbSpec {
 
   it should "be relatable outside transactions" in { f =>
     f.dogSpecies.add(f.dogX)
+  }
+
+  it should "be unrelatable outside transactions" in { f =>
+    f.dogSpecies.add(f.dogX)
+    f.dogSpecies.animals.removeAll()
   }
 
   it should "be persistible when unrelated" in withTransaction { f =>
