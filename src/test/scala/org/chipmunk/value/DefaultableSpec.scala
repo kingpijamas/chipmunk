@@ -1,10 +1,10 @@
-package org.chipmunk.types
+package org.chipmunk.value
 
 import scala.annotation.implicitNotFound
 
-import org.chipmunk.types.Defaultable.DefaultableInt
-import org.chipmunk.types.Defaultable.defaultOf
-import org.chipmunk.types.Defaultable.defaultableOption
+import org.chipmunk.value.Defaultable.DefaultableInt;
+import org.chipmunk.value.Defaultable.defaultOf;
+import org.chipmunk.value.Defaultable.defaultableOption;
 import org.scalatest.FlatSpec
 
 class DefaultableSpec extends FlatSpec {

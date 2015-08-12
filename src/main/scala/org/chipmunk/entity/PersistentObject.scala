@@ -5,7 +5,7 @@ import scala.reflect.ClassTag
 import scala.reflect.runtime.currentMirror
 import scala.reflect.runtime.universe.TypeTag
 import org.squeryl.Table
-import org.chipmunk.types.Type
+import org.chipmunk.value.Type
 
 abstract class PersistentObject[T <: PersistentObject[T, O], O](
   table: Table[T],

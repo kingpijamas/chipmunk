@@ -1,4 +1,4 @@
-package org.chipmunk.types
+package org.chipmunk.value
 
 import org.joda.time.{ Duration => JDuration }
 import org.squeryl.customtypes.LongField

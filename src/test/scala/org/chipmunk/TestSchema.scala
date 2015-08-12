@@ -2,8 +2,8 @@ package org.chipmunk
 
 import org.chipmunk.entity.Entity
 import org.chipmunk.entity.Identifiable.Id
-import org.chipmunk.types.Defaultable.DefaultableLong
-import org.chipmunk.types.Defaultable.defaultOf
+import org.chipmunk.value.Defaultable.DefaultableLong
+import org.chipmunk.value.Defaultable.defaultOf
 import org.scalatest.Finders
 import org.scalatest.Suite
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong

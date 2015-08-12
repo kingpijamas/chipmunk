@@ -1,4 +1,4 @@
-package org.chipmunk.types
+package org.chipmunk.value
 
 import java.sql.{ Date => SQLDate }
 import java.math.{ BigDecimal => JBigDecimal }

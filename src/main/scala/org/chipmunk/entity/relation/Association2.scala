@@ -1,8 +1,8 @@
 package org.chipmunk.entity.relation
 
 import org.chipmunk.entity.Identifiable.Id
-import org.chipmunk.types.Defaultable.DefaultableLong
-import org.chipmunk.types.Defaultable.defaultOf
+import org.chipmunk.value.Defaultable.DefaultableLong
+import org.chipmunk.value.Defaultable.defaultOf
 import org.squeryl.KeyedEntity
 import org.squeryl.PrimitiveTypeMode.compositeKey
 import org.squeryl.dsl.CompositeKey2
