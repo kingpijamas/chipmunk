@@ -1,8 +1,7 @@
-package org.chipmunk.entity.relation.proxy
+package org.chipmunk.entity.relation.handle
 
 import org.chipmunk.DbSpec
 import org.chipmunk.TestSchema.Animal
-import org.chipmunk.entity.relation.proxy.OneToManyProxy.OneToManyProxy
 import org.scalatest.Finders
 
 class OneToManyProxySpec extends DbSpec {
@@ -48,7 +47,7 @@ class OneToManyProxySpec extends DbSpec {
 
   protected def withFixture(test: OneArgTest) = {
     val owner = new Animal("Owner")
-    val o2mProxy = owner.children.asInstanceOf[OneToManyProxy[Animal]]
+    val o2mProxy = owner.children.asInstanceOf[OneToManyHandle[Animal]]
 
     val anotherE = new Animal("A")
 
@@ -58,6 +57,6 @@ class OneToManyProxySpec extends DbSpec {
 
   case class FixtureParam(
     owner: Animal,
-    o2mProxy: OneToManyProxy[Animal],
+    o2mProxy: OneToManyHandle[Animal],
     anotherE: Animal)
 }

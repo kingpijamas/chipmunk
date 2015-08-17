@@ -1,10 +1,9 @@
-package org.chipmunk.entity.relation.proxy
+package org.chipmunk.entity.relation.handle
 
 import org.chipmunk.DbSpec
 import org.chipmunk.TestSchema.Animal
-import org.chipmunk.entity.relation.proxy.ManyToOneProxy.ManyToOneProxy
 
-class ManyToOneProxySpec extends DbSpec {
+class ManyToOneHandleSpec extends DbSpec {
   "A ManyToOneProxy" should "be creatable outside transactions" in { _ => }
 
   it should "be relatable outside transactions" in { f =>
@@ -47,7 +46,7 @@ class ManyToOneProxySpec extends DbSpec {
 
   protected def withFixture(test: OneArgTest) = {
     val owner = new Animal("Child")
-    val o2mProxy = owner.parent.asInstanceOf[ManyToOneProxy[Animal]]
+    val o2mProxy = owner.parent.asInstanceOf[ManyToOneHandle[Animal]]
 
     val anotherE = new Animal("A")
 
@@ -57,6 +56,6 @@ class ManyToOneProxySpec extends DbSpec {
 
   case class FixtureParam(
     owner: Animal,
-    m2oProxy: ManyToOneProxy[Animal],
+    m2oProxy: ManyToOneHandle[Animal],
     anotherE: Animal)
 }

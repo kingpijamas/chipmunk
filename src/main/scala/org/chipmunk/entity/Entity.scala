@@ -4,10 +4,10 @@ import scala.collection.mutable
 import org.chipmunk.entity.relation.ManyToMany
 import org.chipmunk.entity.relation.ManyToOne
 import org.chipmunk.entity.relation.OneToMany
-import org.chipmunk.entity.relation.proxy.ManyToManyProxy
-import org.chipmunk.entity.relation.proxy.ManyToOneProxy
-import org.chipmunk.entity.relation.proxy.OneToManyProxy
-import org.chipmunk.entity.relation.proxy.RelationProxy
+import org.chipmunk.entity.relation.handle.ManyToManyHandle
+import org.chipmunk.entity.relation.handle.ManyToOneHandle
+import org.chipmunk.entity.relation.handle.OneToManyHandle
+import org.chipmunk.entity.relation.handle.RelationHandle
 import org.chipmunk.schema.SplittableSchema.ManyToManyDeclaration
 import org.chipmunk.schema.SplittableSchema.ManyToOneDeclaration
 import org.chipmunk.schema.SplittableSchema.OneToManyDeclaration
@@ -20,37 +20,41 @@ abstract class Entity[T <: Entity[T]](
     extends Identifiable with Keyed {
   self: T =>
 
-  private[entity] val relations = mutable.Buffer[RelationProxy[_]]() //TODO: make thread safe
+  private[entity] val relations = mutable.Buffer[RelationHandle[_]]() //TODO: make this thread safe
 
   protected def owner[M <: Entity[_]](
     decl: => OneToManyDeclaration[T, M]): OneToMany[M] = {
-    subscribe(OneToManyProxy[M](decl.value.left(this)))
+    val sRel = decl.value.left(this)
+    subscribe(OneToManyHandle[M](transient = !isPersisted, sRel))
   }
 
   protected def owner[R <: Entity[_]](
     decl: => ManyToManyDeclaration[T, R]): ManyToMany[R] = {
-    subscribe(ManyToManyProxy[R](this, true, decl.value.left(this)))
+    val sRel = decl.value.left(this)
+    subscribe(ManyToManyHandle[R](transient = !isPersisted, this, true, sRel))
   }
 
   protected def ownee[O <: Entity[_]](
     decl: => ManyToOneDeclaration[T, O]): ManyToOne[O] = {
-    subscribe(ManyToOneProxy[O](decl.value.right(this)))
+    val sRel = decl.value.right(this)
+    subscribe(ManyToOneHandle[O](transient = !isPersisted, sRel))
   }
 
   protected def ownee[L <: Entity[_]](
     decl: => ManyToManyDeclaration[L, T]): ManyToMany[L] = {
-    subscribe(ManyToManyProxy[L](this, false, decl.value.right(this)))
+    val sRel = decl.value.right(this)
+    subscribe(ManyToManyHandle[L](transient = !isPersisted, this, false, sRel))
   }
 
-  private[this] def subscribe[R <: RelationProxy[_]](rel: R): R = {
-    relations += rel
-    rel
+  private[this] def subscribe[H <: RelationHandle[_]](relHandle: H): H = {
+    relations += relHandle
+    relHandle
   }
 
   private[entity] def persistBody(): Unit = { table.insertOrUpdate(this) }
 
   private[entity] def persistRelations(): Unit = {
-    relations transform { _.persist() }
+    relations foreach { _.persist() }
   }
 
   private[chipmunk] def persist(): Unit = {
