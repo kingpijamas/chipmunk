@@ -8,11 +8,11 @@ import scala.annotation.meta.field
 
 object ManyToOneHandle {
   def apply[O <: Entity[_]](
-    transient: Boolean,
+    owner: Entity[_],
     actualRel: SManyToOne[O],
     transientRel: SManyToOne[O] = mock.ManyToOne[O]())
   : ManyToOneHandle[O] = {
-    val state = if (transient)
+    val state = if (!owner.isPersisted)
       new TransientM2OState(actualRel, transientRel)
     else
       new PersistentM2OState(actualRel)

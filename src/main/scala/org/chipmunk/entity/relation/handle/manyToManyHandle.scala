@@ -9,16 +9,15 @@ import org.chipmunk.entity.relation.ManyToOne
 
 object ManyToManyHandle {
   def apply[O <: Entity[_]](
-    transient: Boolean,
     owner: Entity[_],
     owningSide: Boolean,
     actualRel: SManyToMany[O])
   : ManyToManyHandle[O] = {
     val transientRel = mock.ManyToMany[O](owner.id, owningSide)
-    ManyToManyHandle(transient, actualRel, transientRel)
+    ManyToManyHandle(!owner.isPersisted, actualRel, transientRel)
   }
 
-  def apply[O <: Entity[_]](
+  private def apply[O <: Entity[_]](
     transient: Boolean,
     actualRel: SManyToMany[O],
     transientRel: SManyToMany[O])

@@ -8,11 +8,11 @@ import scala.annotation.meta.field
 
 object OneToManyHandle {
   def apply[O <: Entity[_]](
-    transient: Boolean,
+    owner: Entity[_],
     actualRel: SOneToMany[O],
     transientRel: SOneToMany[O] = mock.OneToMany[O]())
   : OneToManyHandle[O] = {
-    val state = if (transient)
+    val state = if (!owner.isPersisted)
       new TransientO2MState(actualRel, transientRel)
     else
       new PersistentO2MState(actualRel)

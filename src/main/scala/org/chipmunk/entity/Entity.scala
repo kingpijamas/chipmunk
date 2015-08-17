@@ -20,41 +20,37 @@ abstract class Entity[T <: Entity[T]](
     extends Identifiable with Keyed {
   self: T =>
 
-  private[entity] val relations = mutable.Buffer[RelationHandle[_]]() //TODO: make this thread safe
+  private[entity] val handles = mutable.Buffer[RelationHandle[_]]() //TODO: make this thread safe
 
   protected def owner[M <: Entity[_]](
     decl: => OneToManyDeclaration[T, M]): OneToMany[M] = {
-    val sRel = decl.value.left(this)
-    subscribe(OneToManyHandle[M](transient = !isPersisted, sRel))
+    subscribe(OneToManyHandle[M](this, decl.value.left(this)))
   }
 
   protected def owner[R <: Entity[_]](
     decl: => ManyToManyDeclaration[T, R]): ManyToMany[R] = {
-    val sRel = decl.value.left(this)
-    subscribe(ManyToManyHandle[R](transient = !isPersisted, this, true, sRel))
+    subscribe(ManyToManyHandle[R](this, true, decl.value.left(this)))
   }
 
   protected def ownee[O <: Entity[_]](
     decl: => ManyToOneDeclaration[T, O]): ManyToOne[O] = {
-    val sRel = decl.value.right(this)
-    subscribe(ManyToOneHandle[O](transient = !isPersisted, sRel))
+    subscribe(ManyToOneHandle[O](this, decl.value.right(this)))
   }
 
   protected def ownee[L <: Entity[_]](
     decl: => ManyToManyDeclaration[L, T]): ManyToMany[L] = {
-    val sRel = decl.value.right(this)
-    subscribe(ManyToManyHandle[L](transient = !isPersisted, this, false, sRel))
+    subscribe(ManyToManyHandle[L](this, false, decl.value.right(this)))
   }
 
   private[this] def subscribe[H <: RelationHandle[_]](relHandle: H): H = {
-    relations += relHandle
+    handles += relHandle
     relHandle
   }
 
   private[entity] def persistBody(): Unit = { table.insertOrUpdate(this) }
 
   private[entity] def persistRelations(): Unit = {
-    relations foreach { _.persist() }
+    handles foreach { _.persist() }
   }
 
   private[chipmunk] def persist(): Unit = {
