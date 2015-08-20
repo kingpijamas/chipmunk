@@ -22,7 +22,7 @@ object OneToManyHandle {
 }
 
 class OneToManyHandle[O <: Entity[_]] private[handle] (
-  private[this] var state: OneToManyState[O])
+  @(transient @field) private[handle] var state: OneToManyState[O])
     extends RelationHandle[O] with OneToMany[O] {
 
   def persist(): Unit = { state = state.persist() }

@@ -32,7 +32,7 @@ object ManyToManyHandle {
 }
 
 class ManyToManyHandle[O <: Entity[_]] private[handle] (
-  private[this] var state: ManyToManyState[O])
+  @(transient @field) private[handle] var state: ManyToManyState[O])
     extends RelationHandle[O] with ManyToMany[O] {
 
   def persist(): Unit = { state = state.persist() }

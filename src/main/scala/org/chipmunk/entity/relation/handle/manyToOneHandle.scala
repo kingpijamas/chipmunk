@@ -17,12 +17,12 @@ object ManyToOneHandle {
     else
       new PersistentM2OState(actualRel)
 
-    new ManyToOneHandle(new TransientM2OState[O](actualRel, transientRel))
+    new ManyToOneHandle(state)
   }
 }
 
 class ManyToOneHandle[O <: Entity[_]] private[handle] (
-  private[this] var state: ManyToOneState[O])
+  @(transient @field) private[handle] var state: ManyToOneState[O])
     extends RelationHandle[O] with ManyToOne[O] {
 
   def persist(): Unit = { state = state.persist() }

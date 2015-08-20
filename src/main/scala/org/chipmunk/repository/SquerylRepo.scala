@@ -12,7 +12,7 @@ abstract class SquerylRepo[T <: Entity[_]] extends Repository[T] {
   protected def table: Table[T]
 
   def get(id: Id): Option[T] = {
-    val elems = from(table)(s => where(s.id === id).select(s))
+    val elems = from(table){ s => where(s.id === id).select(s) }
     elems.headOption
   }
 

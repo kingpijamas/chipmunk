@@ -5,12 +5,13 @@ import org.chipmunk.TestSchema.Animal
 import org.chipmunk.TestSchema.Schema.animals
 import org.scalatest.Finders
 import org.squeryl.PrimitiveTypeMode.from
+import org.squeryl.PrimitiveTypeMode.inTransaction
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.where
 import org.squeryl.Table
 
-class ManyToManyHandleSpec extends DbSpec {
-  "A ManyToManyProxy" should "be creatable outside transactions" in { _ => }
+class OneToManyHandleSpec extends DbSpec {
+  "A OneToManyHandle" should "be creatable outside transactions" in { _ => }
 
   it should "start in transient state when owning Entity is not persisted" in { f =>
     assert(f.ownersHandle.state.isTransient)
@@ -68,19 +69,20 @@ class ManyToManyHandleSpec extends DbSpec {
 
   protected def withFixture(test: OneArgTest) = {
     val owner = new Animal("Owner")
-    def testHandleOf(o: Animal): ManyToManyHandle[Animal] = {
-      o.friends.asInstanceOf[ManyToManyHandle[Animal]]
+    def testHandleOf(o: Animal): OneToManyHandle[Animal] = {
+      o.children.asInstanceOf[OneToManyHandle[Animal]]
     }
+
     val anotherE = new Animal("A")
 
-    val theFixture = FixtureParam(animals, owner, testHandleOf, anotherE)
+    val theFixture = FixtureParam(animals, owner, testHandleOf,  anotherE)
     withFixture(test.toNoArgTest(theFixture))
   }
 
   case class FixtureParam(
     ownersTable: Table[Animal],
     owner: Animal,
-    testHandleOf: Animal => ManyToManyHandle[Animal],
+    testHandleOf: Animal => OneToManyHandle[Animal],
     anotherE: Animal) {
     val ownersHandle = testHandleOf(owner)
   }
