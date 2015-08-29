@@ -35,9 +35,12 @@ private class ManyToMany[O <: Identifiable](
     assign(o, assoc)
   }
 
+  /**
+   * CHECK: Os will almost always be persistent entities (and thus should
+   * have overriden hashCode). If this weren't the case, hashing *will* be a
+   * problem when trying to use this class
+   */
   def assign(o: O, a: A): Association2 = {
-    //CHECK: Os will almost always be persistent entities (and thus should have overriden hashCode).
-    // If this weren't the case, hashing *will* be a problem when trying to use this class
     values += o -> a
     a
   }

@@ -14,5 +14,6 @@ trait OneToMany[O <: Entity[_]] extends Relation[O] {
   def add(others: O*): Unit = { others foreach { add(_) } }
 
   def removeAll(): Unit = { toSqueryl.deleteAll }
-  //  def remove(others: O*): Unit
+
+  protected final def isOwningSide: Boolean = true
 }

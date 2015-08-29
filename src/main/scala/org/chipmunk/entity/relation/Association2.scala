@@ -6,6 +6,12 @@ import org.chipmunk.value.Defaultable.defaultOf
 import org.squeryl.KeyedEntity
 import org.squeryl.PrimitiveTypeMode.compositeKey
 import org.squeryl.dsl.CompositeKey2
+import org.chipmunk.entity.Identifiable
+
+object Association2 {
+  def apply(owner: Identifiable, ownee: Identifiable): Association2 =
+    new Association2(owner.id, ownee.id)
+}
 
 class Association2(val ownerId: Id, val owneeId: Id)
     extends KeyedEntity[CompositeKey2[Id, Id]] {

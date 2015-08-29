@@ -46,7 +46,7 @@ trait SplittableSchema extends Schema {
   : OneToManyDeclaration[O, M] = {
     declare {
       oneToManyRelation(tableOfO, tableOfM).
-        via((o: O, m: M) => { o.id === joinAttr(m) })
+        via((o: O, m: M) => o.id === joinAttr(m))
     }
   }
 
@@ -71,9 +71,8 @@ trait SplittableSchema extends Schema {
     }
   }
 
-  private[this] def manyToManyJoin =
-    (l: Entity[_], r: Entity[_], a: Association2) =>
-      (l.id === a.ownerId, a.owneeId === r.id)
+  private[this] def manyToManyJoin(l: Entity[_], r: Entity[_], a: Association2) =
+    (l.id === a.ownerId, a.owneeId === r.id)
 
   private[this] def declare[R <: SquerylRelation[_, _]](
     rel: => R): Declaration[R] = {

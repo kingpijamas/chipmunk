@@ -14,24 +14,26 @@ object ManyToManyHandle {
     actualRel: SManyToMany[O])
   : ManyToManyHandle[O] = {
     val transientRel = mock.ManyToMany[O](owner.id, owningSide)
-    ManyToManyHandle(!owner.isPersisted, actualRel, transientRel)
+    ManyToManyHandle(!owner.isPersisted, owningSide, actualRel, transientRel)
   }
 
   private def apply[O <: Entity[_]](
     transient: Boolean,
+    owningSide: Boolean,
     actualRel: SManyToMany[O],
     transientRel: SManyToMany[O])
   : ManyToManyHandle[O] = {
     val state = if (transient)
-      new TransientM2MState(actualRel, transientRel)
+      new TransientM2MState(owningSide, actualRel, transientRel)
     else
-      new PersistentM2MState(actualRel)
+      new PersistentM2MState(owningSide, actualRel)
 
-    new ManyToManyHandle(state)
+    new ManyToManyHandle(owningSide, state)
   }
 }
 
 class ManyToManyHandle[O <: Entity[_]] private[handle] (
+  @(transient @field) protected val isOwningSide: Boolean,
   @(transient @field) private[handle] var state: ManyToManyState[O])
     extends RelationHandle[O] with ManyToMany[O] {
 
@@ -47,24 +49,23 @@ sealed trait ManyToManyState[O <: Entity[_]] extends RelationStateLike[O] {
 }
 
 private class TransientM2MState[O <: Entity[_]](
+  protected val isOwningSide: Boolean,
   val actualRel: SManyToMany[O],
   val rel: SManyToMany[O])
     extends ManyToManyState[O] with TransientStateLike[O] {
 
   def persist(): PersistentM2MState[O] = {
     if (isDirty) {
-      rel.associationMap foreach {
-        case (other, assoc) =>
-          if (!other.isPersisted) {
-            other.persistBody()
-          }
+      rel.associationMap foreach { case (other, assoc) =>
+          if (!other.isPersisted) { other.persistBody() }
           actualRel.associate(other, assoc)
       }
     }
-    new PersistentM2MState[O](actualRel)
+    new PersistentM2MState[O](isOwningSide, actualRel)
   }
 }
 
 private class PersistentM2MState[O <: Entity[_]](
+  protected val isOwningSide: Boolean,
   val rel: SManyToMany[O])
     extends ManyToManyState[O] with PersistentStateLike[O]

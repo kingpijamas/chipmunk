@@ -15,4 +15,6 @@ trait Relation[O <: Entity[_]] extends Iterable[O] {
   def toSqueryl: SRel
 
   def iterator: Iterator[O] = toSqueryl.iterator
+
+  protected def isOwningSide: Boolean
 }

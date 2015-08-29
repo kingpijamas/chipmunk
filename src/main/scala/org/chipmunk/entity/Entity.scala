@@ -23,23 +23,35 @@ abstract class Entity[T <: Entity[T]](
   private[entity] val handles = mutable.Buffer[RelationHandle[_]]() //TODO: make this thread safe
 
   protected def owner[M <: Entity[_]](
-    decl: => OneToManyDeclaration[T, M]): OneToMany[M] = {
-    subscribe(OneToManyHandle[M](this, decl.value.left(this)))
+    decl: => OneToManyDeclaration[T, M])
+  : OneToMany[M] = {
+    val squerylRel = decl.value.left(this)
+    val handle = OneToManyHandle[M](this, squerylRel)
+    subscribe(handle)
   }
 
   protected def owner[R <: Entity[_]](
-    decl: => ManyToManyDeclaration[T, R]): ManyToMany[R] = {
-    subscribe(ManyToManyHandle[R](this, true, decl.value.left(this)))
+    decl: => ManyToManyDeclaration[T, R])
+  : ManyToMany[R] = {
+    val squerylRel = decl.value.left(this)
+    val handle = ManyToManyHandle[R](this, true, squerylRel)
+    subscribe(handle)
   }
 
   protected def ownee[O <: Entity[_]](
-    decl: => ManyToOneDeclaration[T, O]): ManyToOne[O] = {
-    subscribe(ManyToOneHandle[O](this, decl.value.right(this)))
+    decl: => ManyToOneDeclaration[T, O])
+  : ManyToOne[O] = {
+    val squerylRel = decl.value.right(this)
+    val handle = ManyToOneHandle[O](this, squerylRel)
+    subscribe(handle)
   }
 
   protected def ownee[L <: Entity[_]](
-    decl: => ManyToManyDeclaration[L, T]): ManyToMany[L] = {
-    subscribe(ManyToManyHandle[L](this, false, decl.value.right(this)))
+    decl: => ManyToManyDeclaration[L, T])
+  : ManyToMany[L] = {
+    val squerylRel = decl.value.right(this)
+    val handle = ManyToManyHandle[L](this, false, squerylRel)
+    subscribe(handle)
   }
 
   private[this] def subscribe[H <: RelationHandle[_]](relHandle: H): H = {

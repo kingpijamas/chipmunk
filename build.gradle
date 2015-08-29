@@ -29,12 +29,6 @@ ext {
 	scala_minor_version = '7'
 	scala_version = scala_major_version + '.' + scala_minor_version
 	scala_suffix = '_' + scala_major_version
-
-	scalatest_version = '2.2.5'
-	scalamock_version = '3.2.2'
-
-	squeryl_version = '0.9.5-7'
-	h2_version = '1.4.182'
 }
 
 dependencies {
@@ -44,19 +38,19 @@ dependencies {
 	compile group: 'org.scala-lang', name: 'scala-reflect', version: scala_version
 
 	//Persistence
-	compile group: 'org.squeryl', name: 'squeryl' + scala_suffix, version: squeryl_version
+	compile group: 'org.squeryl', name: 'squeryl' + scala_suffix, version: '0.9.5-7'
 
 	//Time
 	compile group: 'joda-time', name: 'joda-time', version: '2.5'
 	compile group: 'org.joda', name: 'joda-convert', version: '1.7'
 
 	//Test utils
-	compile group: 'com.h2database', name: 'h2', version: h2_version
-	compile group: 'org.scalatest', name: 'scalatest' + scala_suffix, version: scalatest_version
+	compile group: 'com.h2database', name: 'h2', version: '1.4.182'
+	compile group: 'org.scalatest', name: 'scalatest' + scala_suffix, version: '2.2.5'
 
 	//Testing
 	testRuntime group: 'org.pegdown', name: 'pegdown', version:'1.5.0'
-	testCompile group: 'org.scalamock', name: 'scalamock-scalatest-support' + scala_suffix, version: scalamock_version
+	testCompile group: 'org.mockito', name: 'mockito-all', version: '1.+'
 }
 
 tasks.withType(ScalaCompile) {
