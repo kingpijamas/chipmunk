@@ -2,7 +2,8 @@ buildscript {
 	repositories { jcenter() }
 
 	dependencies {
-		classpath group: 'org.github.ngbinh.scalastyle', name: 'gradle-scalastyle-plugin_2.11', version: '0.7.2'
+		classpath 'org.github.ngbinh.scalastyle:gradle-scalastyle-plugin_2.11:0.7.2'
+		classpath 'org.scoverage:gradle-scoverage:1.0.9'
 	}
 }
 
@@ -14,6 +15,7 @@ apply plugin: 'eclipse'
 apply plugin: 'application'
 apply plugin: 'scalaStyle'
 apply plugin: 'maven-publish'
+apply plugin: 'scoverage'
 
 repositories {
 	mavenLocal()
@@ -29,6 +31,8 @@ ext {
 	scala_minor_version = '7'
 	scala_version = scala_major_version + '.' + scala_minor_version
 	scala_suffix = '_' + scala_major_version
+	
+	scoverage_version = '1.1.0'
 }
 
 dependencies {
@@ -47,7 +51,9 @@ dependencies {
 	//Test utils
 	compile group: 'com.h2database', name: 'h2', version: '1.4.182'
 	compile group: 'org.scalatest', name: 'scalatest' + scala_suffix, version: '2.2.5'
-
+	scoverage group: 'org.scoverage', name: 'scalac-scoverage-plugin' + scala_suffix, version: scoverage_version
+	scoverage group: 'org.scoverage', name: 'scalac-scoverage-runtime' + scala_suffix, version: scoverage_version
+	
 	//Testing
 	testRuntime group: 'org.pegdown', name: 'pegdown', version:'1.5.0'
 	testCompile group: 'org.mockito', name: 'mockito-all', version: '1.+'
@@ -63,7 +69,12 @@ tasks.withType(ScalaCompile) {
 	]
 }
 
-test { maxParallelForks = 1 } // FIXME not ideal, but there are thread-unsafe tests
+test { maxParallelForks = 1 }
+testScoverage { maxParallelForks = 1 }
+
+checkScoverage {
+	minimumRate = 0.62
+}
 
 scalaStyle {
 	configLocation = "/src/test/resources/scalastyle-config.xml"
@@ -76,6 +87,7 @@ task sourceJar(type: Jar) {
 	from sourceSets.main.allJava
 	from sourceSets.main.allScala
 }
+
 
 publishing {
 	publications {
