@@ -10,27 +10,27 @@ import org.scalatest.mock.MockitoSugar
 import org.squeryl.dsl.{ ManyToMany => SM2M }
 
 class ManyToManySpec extends fixture.FlatSpec with MockitoSugar {
-  "A ManyToMany" should "call 'associate' on add when isOwningSide" in { f =>
+  "A ManyToMany" should "call 'associate' on += when isOwningSide" in { f =>
     val animal = new Animal
     val innerRel = f.ownerM2M.toSqueryl
 
-    f.ownerM2M.add(animal)
+    f.ownerM2M += animal
     verify(innerRel).associate(animal)
   }
 
-  it should "call 'assign' on add when not isOwningSide" in { f =>
+  it should "call 'assign' on += when not isOwningSide" in { f =>
     val animal = new Animal
     val innerRel = f.owneeM2M.toSqueryl
 
-    f.owneeM2M.add(animal)
+    f.owneeM2M += animal
     verify(innerRel).assign(animal)
   }
 
-  it should "call 'dissociate' on remove when isOwningSide" in { f =>
+  it should "call 'dissociate' on -= when isOwningSide" in { f =>
     checkDissociateCalledOnceOnRemove(f.ownerM2M)
   }
 
-  it should "call 'dissociate' on remove when not isOwningSide" in { f =>
+  it should "call 'dissociate' on -= when not isOwningSide" in { f =>
     checkDissociateCalledOnceOnRemove(f.owneeM2M)
   }
 
@@ -38,22 +38,22 @@ class ManyToManySpec extends fixture.FlatSpec with MockitoSugar {
     val animal = new Animal
     val innerRel = m2m.toSqueryl
 
-    m2m.remove(animal)
+    m2m -= animal
     verify(innerRel).dissociate(animal)
   }
 
-  it should "call 'dissociateAll' on removeAll when isOwningSide" in { f =>
+  it should "call 'dissociateAll' on clear when isOwningSide" in { f =>
     checkDissociateAllCalledOnceOnRemove(f.ownerM2M)
   }
 
-  it should "call 'dissociateAll' on removeAll when not isOwningSide" in { f =>
+  it should "call 'dissociateAll' on clear when not isOwningSide" in { f =>
     checkDissociateAllCalledOnceOnRemove(f.owneeM2M)
   }
 
   private[this] def checkDissociateAllCalledOnceOnRemove(m2m: ManyToMany[Animal]) = {
     val innerRel = m2m.toSqueryl
 
-    m2m.removeAll()
+    m2m.clear()
     verify(innerRel).dissociateAll
   }
 

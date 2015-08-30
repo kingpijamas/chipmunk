@@ -6,11 +6,11 @@ import org.chipmunk.entity.Entity
 trait Relation[O <: Entity[_]] extends Iterable[O] {
   type SRel <: Query[O]
 
-  def add(other: O): Unit
+  def +=(other: O): this.type
 
   //  def remove(other: O): Unit
 
-  def removeAll(): Unit
+  def clear(): Unit
 
   def toSqueryl: SRel
 

@@ -29,37 +29,37 @@ class ManyToOneHandleSpec extends DbSpec {
   }
 
   it should "be relatable outside transactions" in { f =>
-    f.ownersHandle.add(f.anotherE)
+    f.ownersHandle += f.anotherE
   }
 
   it should "be relatable outside transactions (with loops)" in { f =>
-    f.ownersHandle.add(f.owner)
+    f.ownersHandle += f.owner
   }
 
   it should "be unrelatable outside transactions" in { f =>
-    f.ownersHandle.add(f.anotherE)
-    f.ownersHandle.removeAll()
+    f.ownersHandle += f.anotherE
+    f.ownersHandle.clear()
   }
 
   it should "be unrelatable outside transactions (with loops)" in { f =>
-    f.ownersHandle.add(f.owner)
-    f.ownersHandle.removeAll()
+    f.ownersHandle += f.owner
+    f.ownersHandle.clear()
   }
 
   it should "be persistible when related if owner's body is persisted" in withTransaction { f =>
-    f.ownersHandle.add(f.anotherE)
+    f.ownersHandle += f.anotherE
     f.owner.persistBody()
     f.ownersHandle.persist()
   }
 
   it should "be persistible when related (with loops) if owner's body is persisted" in withTransaction { f =>
-    f.ownersHandle.add(f.owner)
+    f.ownersHandle += f.owner
     f.owner.persistBody()
     f.ownersHandle.persist()
   }
 
   it should "persist its related entities' bodies when persisted if owner's body is persisted" in withTransaction { f =>
-    f.ownersHandle.add(f.anotherE)
+    f.ownersHandle += f.anotherE
     f.owner.persistBody()
     f.ownersHandle.persist()
 
@@ -79,10 +79,10 @@ class ManyToOneHandleSpec extends DbSpec {
   }
 
   case class FixtureParam(
-    ownersTable: Table[Animal],
-    owner: Animal,
-    testHandleOf: Animal => ManyToOneHandle[Animal],
-    anotherE: Animal) {
+      ownersTable: Table[Animal],
+      owner: Animal,
+      testHandleOf: Animal => ManyToOneHandle[Animal],
+      anotherE: Animal) {
     val ownersHandle = testHandleOf(owner)
   }
 }

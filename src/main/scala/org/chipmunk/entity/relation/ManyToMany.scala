@@ -2,26 +2,31 @@ package org.chipmunk.entity.relation
 
 import org.chipmunk.entity.Entity
 import org.squeryl.dsl.{ ManyToMany => SM2M }
+import scala.collection.generic.Growable
+import scala.collection.generic.Shrinkable
 
 object ManyToMany {
   type SManyToMany[O <: Entity[_]] = SM2M[O, Association2]
 }
 
-trait ManyToMany[O <: Entity[_]] extends Relation[O] {
+trait ManyToMany[O <: Entity[_]]
+    extends Relation[O] with Growable[O] with Shrinkable[O] {
   final type SRel = ManyToMany.SManyToMany[O]
 
-  def add(other: O): Unit = {
+  def +=(other: O): this.type = {
     val squerylRel = toSqueryl
     if (isOwningSide) {
       squerylRel.associate(other)
     } else {
       squerylRel.assign(other)
     }
+    this
   }
 
-  def add(others: O*): Unit = { others foreach { add(_) } }
+  def -=(other: O): this.type = {
+    toSqueryl.dissociate(other)
+    this
+  }
 
-  def remove(other: O): Unit = { toSqueryl.dissociate(other) }
-  def remove(others: O*): Unit = { others foreach { remove(_) } }
-  def removeAll(): Unit = { toSqueryl.dissociateAll }
+  def clear(): Unit = { toSqueryl.dissociateAll }
 }

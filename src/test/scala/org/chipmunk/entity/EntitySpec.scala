@@ -17,7 +17,7 @@ class EntitySpec extends DbSpec {
 
   it should "be unrelatable outside transactions" in { f =>
     f.dogSpecies.add(f.dogX)
-    f.dogSpecies.animals.removeAll()
+    f.dogSpecies.animals.clear()
   }
 
   it should "be persistible when unrelated" in withTransaction { f =>

@@ -74,12 +74,12 @@ object TestSchema {
     lazy val friends = owner(Schema.friends)
 
     def addChildren(children: Animal*): Unit = {
-      this.children.add(children: _*)
-      children foreach { _.parent.add(this) }
+      this.children ++= children
+      children foreach { _.parent += this }
     }
 
     def addFriends(friends: Animal*): Unit = {
-      this.friends.add(friends: _*)
+      this.friends ++= friends
     }
   }
 
@@ -89,8 +89,8 @@ object TestSchema {
     lazy val animals = owner(Schema.species2Animals)
 
     def add(animal: Animal): Unit = {
-      animals.add(animal)
-      animal.species.add(this)
+      animals += animal
+      animal.species += this
     }
   }
 
