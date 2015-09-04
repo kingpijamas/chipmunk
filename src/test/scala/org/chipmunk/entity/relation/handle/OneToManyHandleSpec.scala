@@ -5,7 +5,6 @@ import org.chipmunk.TestSchema.Animal
 import org.chipmunk.TestSchema.Schema.animals
 import org.scalatest.Finders
 import org.squeryl.PrimitiveTypeMode.from
-import org.squeryl.PrimitiveTypeMode.inTransaction
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.where
 import org.squeryl.Table
@@ -29,34 +28,51 @@ class OneToManyHandleSpec extends DbSpec {
     assert(!ownerFromDbsHandle.state.isTransient)
   }
 
-  it should "be relatable outside transactions" in { f =>
-    f.ownersHandle += f.anotherE
+  it should "be relatable outside transactions when transient" in { f =>
+    add(f.ownersHandle, f.anotherE)
+  }
+  it should "be relatable (with loops) outside transactions when transient" in { f =>
+    add(f.ownersHandle, f.owner)
+  }
+  it should "be relatable in transactions when persistent" in withTransaction { f =>
+    f.owner.persist()
+    add(f.ownersHandle, f.anotherE)
+  }
+  it should "be relatable (with loops) in transactions when persistent" in withTransaction { f =>
+    f.owner.persist()
+    add(f.ownersHandle, f.owner)
+  }
+  def add(handle: OneToManyHandle[Animal], toAdd: Animal): Unit = {
+    handle += toAdd
+    assert(handle exists { _ == toAdd })
   }
 
-  it should "be relatable outside transactions (with loops)" in { f =>
-    f.ownersHandle += f.owner
+  it should "be unrelatable outside transactions when transient" in { f =>
+    addThenRemove(f.ownersHandle, f.anotherE)
+  }
+  it should "be unrelatable in transactions when persistent" in withTransaction { f =>
+    f.owner.persist()
+    addThenRemove(f.ownersHandle, f.anotherE)
+  }
+  def addThenRemove(handle: OneToManyHandle[Animal], toAdd: Animal): Unit = {
+    handle += toAdd
+    handle -= toAdd
+
+    assert(handle forall { _ != toAdd })
   }
 
-  it should "be unrelatable outside transactions" in { f =>
-    f.ownersHandle += f.anotherE
-    f.ownersHandle.clear()
+  it should "be clearable outside transactions when transient" in { f =>
+    addThenClear(f.ownersHandle, f.anotherE)
   }
-
-  it should "be unrelatable outside transactions (with loops)" in { f =>
-    f.ownersHandle += f.owner
-    f.ownersHandle.clear()
+  it should "be clearable in transactions when persistent" in withTransaction { f =>
+    f.owner.persist()
+    addThenClear(f.ownersHandle, f.anotherE)
   }
+  def addThenClear(handle: OneToManyHandle[Animal], toAdd: Animal): Unit = {
+    handle += toAdd
+    handle.clear()
 
-  it should "be persistible when related if owner's body is persisted" in withTransaction { f =>
-    f.ownersHandle += f.anotherE
-    f.owner.persistBody()
-    f.ownersHandle.persist()
-  }
-
-  it should "be persistible when related (with loops) if owner's body is persisted" in withTransaction { f =>
-    f.ownersHandle += f.owner
-    f.owner.persistBody()
-    f.ownersHandle.persist()
+    assert(handle.isEmpty)
   }
 
   it should "persist its related entities' bodies when persisted if owner's body is persisted" in withTransaction { f =>
@@ -75,15 +91,15 @@ class OneToManyHandleSpec extends DbSpec {
 
     val anotherE = new Animal("A")
 
-    val theFixture = FixtureParam(animals, owner, testHandleOf,  anotherE)
+    val theFixture = FixtureParam(animals, owner, testHandleOf, anotherE)
     withFixture(test.toNoArgTest(theFixture))
   }
 
   case class FixtureParam(
-    ownersTable: Table[Animal],
-    owner: Animal,
-    testHandleOf: Animal => OneToManyHandle[Animal],
-    anotherE: Animal) {
+      ownersTable: Table[Animal],
+      owner: Animal,
+      testHandleOf: Animal => OneToManyHandle[Animal],
+      anotherE: Animal) {
     val ownersHandle = testHandleOf(owner)
   }
 }

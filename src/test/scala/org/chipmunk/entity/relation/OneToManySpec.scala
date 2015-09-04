@@ -37,6 +37,8 @@ class OneToManySpec extends fixture.FlatSpec with MockitoSugar {
 
   class TestOneToMany extends OneToMany[Animal] {
     val toSqueryl: SRel = mock[TestSO2M[Animal]]
+
+    def -=(other: Animal): this.type = ???
   }
 
   class TestSO2M[O <: Identifiable] extends Query[O] with SO2M[O] {

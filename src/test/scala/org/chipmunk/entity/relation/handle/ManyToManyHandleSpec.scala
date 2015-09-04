@@ -10,7 +10,7 @@ import org.squeryl.PrimitiveTypeMode.where
 import org.squeryl.Table
 
 class ManyToManyHandleSpec extends DbSpec {
-  "A ManyToManyProxy" should "be creatable outside transactions" in { _ => }
+  "A ManyToManyHandle" should "be creatable outside transactions" in { _ => }
 
   it should "start in transient state when owning Entity is not persisted" in { f =>
     assert(f.ownersHandle.state.isTransient)
@@ -38,10 +38,24 @@ class ManyToManyHandleSpec extends DbSpec {
 
   it should "be unrelatable outside transactions" in { f =>
     f.ownersHandle += f.anotherE
-    f.ownersHandle.clear()
+    f.ownersHandle -= f.anotherE
+
+    assert(f.ownersHandle forall { _ != f.anotherE })
   }
 
   it should "be unrelatable outside transactions (with loops)" in { f =>
+    f.ownersHandle += f.owner
+    f.ownersHandle -= f.owner
+
+    assert(f.ownersHandle forall { _ != f.owner })
+  }
+
+  it should "be clearable outside transactions" in { f =>
+    f.ownersHandle += f.anotherE
+    f.ownersHandle.clear()
+  }
+
+  it should "be clearable outside transactions (with loops)" in { f =>
     f.ownersHandle += f.owner
     f.ownersHandle.clear()
   }

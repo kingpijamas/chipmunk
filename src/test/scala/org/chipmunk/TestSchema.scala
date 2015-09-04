@@ -12,6 +12,7 @@ import org.squeryl.PrimitiveTypeMode.string2ScalarString
 import org.squeryl.Schema
 import org.squeryl.Table
 import org.chipmunk.schema.SplittableSchema
+import org.chipmunk.repository.SquerylRepo
 
 trait TestSchema {
   self: Suite =>
@@ -69,7 +70,7 @@ object TestSchema {
 
     lazy val parent = ownee(Schema.parent2Children)
 
-    lazy val children = owner(Schema.parent2Children)
+    lazy val children = owner(Schema.parent2Children) { _.parentId = None }
 
     lazy val friends = owner(Schema.friends)
 
@@ -86,7 +87,7 @@ object TestSchema {
   class Species(val name: String) extends Entity[Species](Schema.species) {
     def keys: Product1[String] = Tuple1(name)
 
-    lazy val animals = owner(Schema.species2Animals)
+    lazy val animals = owner(Schema.species2Animals) { _.speciesId = None }
 
     def add(animal: Animal): Unit = {
       animals += animal
@@ -98,5 +99,9 @@ object TestSchema {
     def keys: Product1[String] = Tuple1(name)
 
     lazy val animals = ownee(Schema.animals2Habitats)
+  }
+
+  class AnimalRepo extends SquerylRepo[Animal] {
+    val table = Schema.animals
   }
 }

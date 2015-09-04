@@ -10,7 +10,8 @@ object OneToMany {
     new OneToMany[M](mutable.Set() ++= values)
 }
 
-private class OneToMany[M](values: mutable.Set[M])
+private[relation] class OneToMany[M](
+  values: mutable.Set[M] = mutable.Set.empty[M])
     extends Query[M] with SOneToMany[M] {
 
   def iterable: Iterable[M] = values
@@ -26,5 +27,10 @@ private class OneToMany[M](values: mutable.Set[M])
     val deletionCount = values.size
     values.clear()
     deletionCount
+  }
+
+  private[relation] def -=(m: M): this.type = {
+    values -= m
+    this
   }
 }

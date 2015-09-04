@@ -3,15 +3,17 @@ package org.chipmunk.entity.relation
 import org.chipmunk.entity.Entity
 import org.squeryl.dsl.{ OneToMany => SO2M }
 import scala.collection.generic.Growable
+import scala.collection.generic.Shrinkable
 
 object OneToMany {
-  type SOneToMany[O] = SO2M[O]
+  type SOneToMany[M] = SO2M[M]
 }
 
-trait OneToMany[O <: Entity[_]] extends Relation[O] with Growable[O] {
-  final type SRel = OneToMany.SOneToMany[O]
+trait OneToMany[M <: Entity[_]]
+    extends Relation[M] with Growable[M] with Shrinkable[M] {
+  final type SRel = OneToMany.SOneToMany[M]
 
-  def +=(other: O): this.type = {
+  def +=(other: M): this.type = {
     toSqueryl.associate(other)
     this
   }

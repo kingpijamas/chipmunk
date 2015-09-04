@@ -10,6 +10,7 @@ import org.scalatest.Matchers
 import org.scalatest.fixture
 import org.chipmunk.DbSpec
 import org.squeryl.Table
+import org.chipmunk.TestSchema.AnimalRepo
 
 class SquerylRepoSpec extends DbSpec {
   "A SquerylRepo" should "fail when trying to save an entity from another table" in { f =>
@@ -30,8 +31,4 @@ class SquerylRepoSpec extends DbSpec {
   }
 
   case class FixtureParam(repo: AnimalRepo, entity: Animal)
-
-  class AnimalRepo extends SquerylRepo[Animal] {
-    val table = Schema.animals
-  }
 }

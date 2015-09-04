@@ -1,6 +1,7 @@
 package org.chipmunk.entity
 
 import scala.collection.mutable
+import org.chipmunk.entity.Identifiable.Id
 import org.chipmunk.entity.relation.ManyToMany
 import org.chipmunk.entity.relation.ManyToOne
 import org.chipmunk.entity.relation.OneToMany
@@ -14,6 +15,7 @@ import org.chipmunk.schema.SplittableSchema.OneToManyDeclaration
 import org.squeryl.PrimitiveTypeMode.inTransaction
 import org.squeryl.Table
 import scala.annotation.meta.field
+import org.chipmunk.value.Defaultable
 
 abstract class Entity[T <: Entity[T]](
   @(transient @field) private[chipmunk] val table: Table[T])
@@ -22,11 +24,11 @@ abstract class Entity[T <: Entity[T]](
 
   private[entity] val handles = mutable.Buffer[RelationHandle[_]]() //TODO: make this thread safe
 
-  protected def owner[M <: Entity[_]](
-    decl: => OneToManyDeclaration[T, M])
+  protected def owner[M <: Entity[M]](
+    decl: => OneToManyDeclaration[T, M])(
+    unsetFk: M => Unit)
   : OneToMany[M] = {
-    val squerylRel = decl.value.left(this)
-    val handle = OneToManyHandle[M](this, squerylRel)
+    val handle = OneToManyHandle(this, decl.value.left, unsetFk)
     subscribe(handle)
   }
 
