@@ -70,7 +70,7 @@ tasks.withType(ScalaCompile) {
 test { maxParallelForks = 1 }
 testScoverage { maxParallelForks = 1 }
 
-checkScoverage { minimumRate = 0.62 }
+checkScoverage { minimumRate = 0.63 }
 
 scalaStyle {
 	configLocation = "/src/test/resources/scalastyle-config.xml"

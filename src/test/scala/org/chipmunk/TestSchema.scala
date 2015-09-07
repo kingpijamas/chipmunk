@@ -40,9 +40,31 @@ object TestSchema {
         columns(s.name) are (unique)))
     }
 
-    val species2Animals = oneToMany(species, animals) { a => &(a.speciesId) }
+    val species2Animals = oneToMany(species, animals) { a =>
+      {
+        import org.chipmunk.schema.ForeignKey
+        new ForeignKey[Option[Id]] {
+          def value: Option[Id] = a.speciesId
 
-    val parent2Children = oneToMany(animals, animals) { c => &(c.parentId) }
+          def set(x: Option[Id]): Unit = {
+            a.speciesId = x
+          }
+        }
+      }
+    }
+
+    val parent2Children = oneToMany(animals, animals) { c =>
+      {
+        import org.chipmunk.schema.ForeignKey
+        new ForeignKey[Option[Id]] {
+          def value: Option[Id] = c.parentId
+
+          def set(x: Option[Id]): Unit = {
+            c.parentId = x
+          }
+        }
+      }
+    }
 
     val friends = manyToMany(animals, animals, "mates")
 

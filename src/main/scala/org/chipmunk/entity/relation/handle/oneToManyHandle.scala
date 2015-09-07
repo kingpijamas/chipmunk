@@ -13,14 +13,14 @@ import org.chipmunk.schema.ForeignKey
 object OneToManyHandle {
   def apply[O <: Entity[O], M <: Entity[M]](
     owner: O,
-    sqrlRelOf: O => SO2M[M],
-    fk: M => ForeignKey[_],
+    squerylRelOfOf: O => SO2M[M],
+    fkOf: M => ForeignKey[_],
     transientRel: mock.OneToMany[M] = new mock.OneToMany[M]())
   : OneToManyHandle[M] = {
     val state = if (!owner.isPersisted)
-      new TransientO2MState(owner, transientRel, sqrlRelOf, fk)
+      new TransientO2MState(owner, transientRel, squerylRelOfOf, fkOf)
     else
-      new PersistentO2MState(owner, sqrlRelOf(owner), fk)
+      new PersistentO2MState(owner, squerylRelOfOf(owner), fkOf)
 
     new OneToManyHandle(state)
   }
@@ -51,33 +51,33 @@ sealed trait OneToManyState[M <: Entity[_]] extends RelationStateLike[M] {
 private class TransientO2MState[O <: Entity[O], M <: Entity[M]](
   val owner: O,
   val rel: mock.OneToMany[M],
-  val sqrlRel: O => SO2M[M],
-  val fk: M => ForeignKey[_])
+  val squerylRelOf: O => SO2M[M],
+  val fkOf: M => ForeignKey[_])
     extends OneToManyState[M] with TransientStateLike[M] {
 
   private[handle] def -=(other: M): Unit = { rel -= other }
 
   def persist(): PersistentO2MState[O, M] = {
-    val squerylO2M = sqrlRel(owner)
+    val squerylO2M = squerylRelOf(owner)
     if (isDirty) {
       rel foreach { other =>
         if (!other.isPersisted) { other.persistBody() }
         squerylO2M.associate(other)
       }
     }
-    new PersistentO2MState[O, M](owner, squerylO2M, fk)
+    new PersistentO2MState[O, M](owner, squerylO2M, fkOf)
   }
 }
 
 private class PersistentO2MState[O <: Entity[O], M <: Entity[M]](
   val owner: O,
   val rel: SO2M[M],
-  val fk: M => ForeignKey[_])
+  val fkOf: M => ForeignKey[_])
     extends OneToManyState[M] with PersistentStateLike[M] {
 
   private[handle] def -=(other: M): Unit = {
     val othersTable = other.table
-    val othersFk = fk(other)
+    val othersFk = fkOf(other)
 
     if (othersFk.isOptional) {
       val optFk = othersFk.asInstanceOf[ForeignKey[Option[_]]]

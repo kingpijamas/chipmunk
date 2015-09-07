@@ -24,33 +24,30 @@ abstract class Entity[T <: Entity[T]](
 
   private[entity] val handles = mutable.Buffer[RelationHandle[_]]()
 
-  protected def owner[M <: Entity[M]](decl: => OneToManyDeclaration[T, M])
-  : OneToMany[M] = {
+  protected def owner[M <: Entity[M]](
+    decl: => OneToManyDeclaration[T, M]): OneToMany[M] = {
     val handle = OneToManyHandle(this, decl.value.left, decl.fk)
     subscribe(handle)
   }
 
   protected def owner[R <: Entity[_]](
-    decl: => ManyToManyDeclaration[T, R])
-  : ManyToMany[R] = {
+    decl: => ManyToManyDeclaration[T, R]): ManyToMany[R] = {
     val squerylRel = decl.value.left(this)
-    val handle = ManyToManyHandle[R](this, true, squerylRel)
+    val handle = ManyToManyHandle(this, true, squerylRel)
     subscribe(handle)
   }
 
   protected def ownee[O <: Entity[_]](
-    decl: => ManyToOneDeclaration[T, O])
-  : ManyToOne[O] = {
+    decl: => ManyToOneDeclaration[T, O]): ManyToOne[O] = {
     val squerylRel = decl.value.right(this)
-    val handle = ManyToOneHandle[O](this, squerylRel)
+    val handle = ManyToOneHandle(this, squerylRel)
     subscribe(handle)
   }
 
   protected def ownee[L <: Entity[_]](
-    decl: => ManyToManyDeclaration[L, T])
-  : ManyToMany[L] = {
+    decl: => ManyToManyDeclaration[L, T]): ManyToMany[L] = {
     val squerylRel = decl.value.right(this)
-    val handle = ManyToManyHandle[L](this, false, squerylRel)
+    val handle = ManyToManyHandle(this, false, squerylRel)
     subscribe(handle)
   }
 
@@ -59,17 +56,17 @@ abstract class Entity[T <: Entity[T]](
     relHandle
   }
 
-  private[entity] def persistBody(): Unit = { table.insertOrUpdate(this) }
-
-  private[entity] def persistRelations(): Unit = {
-    handles foreach { _.persist() }
-  }
-
   private[chipmunk] def persist(): Unit = {
     inTransaction {
       //FIXME: here's where the cascading save should be put
       persistBody()
       persistRelations()
     }
+  }
+
+  private[entity] def persistBody(): Unit = { table.insertOrUpdate(this) }
+
+  private[this] def persistRelations(): Unit = {
+    handles foreach { _.persist() }
   }
 }
