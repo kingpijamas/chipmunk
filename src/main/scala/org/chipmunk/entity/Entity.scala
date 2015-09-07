@@ -24,10 +24,9 @@ abstract class Entity[T <: Entity[T]](
 
   private[entity] val handles = mutable.Buffer[RelationHandle[_]]()
 
-  protected def owner[M <: Entity[M]](
-    decl: => OneToManyDeclaration[T, M])
+  protected def owner[M <: Entity[M]](decl: => OneToManyDeclaration[T, M])
   : OneToMany[M] = {
-    val handle = OneToManyHandle(this, decl.value.left, decl.unsetFk)
+    val handle = OneToManyHandle(this, decl.value.left, decl.fk)
     subscribe(handle)
   }
 

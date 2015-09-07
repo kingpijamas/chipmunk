@@ -1,23 +1,26 @@
 package org.chipmunk.entity.relation.handle
 
 import org.chipmunk.entity.Entity
-import org.chipmunk.entity.relation.ManyToOne
+import org.chipmunk.entity.Identifiable.Id
 import org.chipmunk.entity.relation.OneToMany
 import org.chipmunk.entity.relation.OneToMany.{ SOneToMany => SO2M }
 import org.chipmunk.entity.relation.mock
+import org.squeryl.PrimitiveTypeMode.__thisDsl
+import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import scala.annotation.meta.field
+import org.chipmunk.schema.ForeignKey
 
 object OneToManyHandle {
   def apply[O <: Entity[O], M <: Entity[M]](
     owner: O,
     sqrlRelOf: O => SO2M[M],
-    unsetFk: M => Unit,
+    fk: M => ForeignKey[_],
     transientRel: mock.OneToMany[M] = new mock.OneToMany[M]())
   : OneToManyHandle[M] = {
     val state = if (!owner.isPersisted)
-      new TransientO2MState(owner, transientRel, sqrlRelOf, unsetFk)
+      new TransientO2MState(owner, transientRel, sqrlRelOf, fk)
     else
-      new PersistentO2MState(owner, sqrlRelOf(owner), unsetFk)
+      new PersistentO2MState(owner, sqrlRelOf(owner), fk)
 
     new OneToManyHandle(state)
   }
@@ -49,7 +52,7 @@ private class TransientO2MState[O <: Entity[O], M <: Entity[M]](
   val owner: O,
   val rel: mock.OneToMany[M],
   val sqrlRel: O => SO2M[M],
-  val unsetFk: M => Unit)
+  val fk: M => ForeignKey[_])
     extends OneToManyState[M] with TransientStateLike[M] {
 
   private[handle] def -=(other: M): Unit = { rel -= other }
@@ -62,19 +65,26 @@ private class TransientO2MState[O <: Entity[O], M <: Entity[M]](
         squerylO2M.associate(other)
       }
     }
-    new PersistentO2MState[O, M](owner, squerylO2M, unsetFk)
+    new PersistentO2MState[O, M](owner, squerylO2M, fk)
   }
 }
 
 private class PersistentO2MState[O <: Entity[O], M <: Entity[M]](
   val owner: O,
   val rel: SO2M[M],
-  val unsetFk: M => Unit)
+  val fk: M => ForeignKey[_])
     extends OneToManyState[M] with PersistentStateLike[M] {
 
   private[handle] def -=(other: M): Unit = {
-    val table = other.table
-    unsetFk(other)
-    table.update(other)
+    val othersTable = other.table
+    val othersFk = fk(other)
+
+    if (othersFk.isOptional) {
+      val optFk = othersFk.asInstanceOf[ForeignKey[Option[_]]]
+      optFk.set(None)
+      othersTable.update(other)
+    } else {
+      othersTable.deleteWhere(_.id === other.id)
+    }
   }
 }

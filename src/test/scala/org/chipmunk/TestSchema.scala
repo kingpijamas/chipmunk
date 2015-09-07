@@ -12,6 +12,7 @@ import org.squeryl.PrimitiveTypeMode.string2ScalarString
 import org.squeryl.Table
 import org.chipmunk.schema.{ Schema => ChipmunkSchema }
 import org.chipmunk.repository.SquerylRepo
+import org.chipmunk.schema.ForeignKey
 
 trait TestSchema {
   self: Suite =>
@@ -39,15 +40,15 @@ object TestSchema {
         columns(s.name) are (unique)))
     }
 
-    val species2Animals = oneToMany(species, animals) { _.speciesId } { _.speciesId = None }
+    val species2Animals = oneToMany(species, animals) { a => &(a.speciesId) }
 
-    val parent2Children = oneToMany(animals, animals) { _.parentId }  { _.parentId = None }
+    val parent2Children = oneToMany(animals, animals) { c => &(c.parentId) }
 
     val friends = manyToMany(animals, animals, "mates")
 
     val animals2Habitats = manyToMany(animals, habitats, "animals2Habitats")
 
-    initRelations()
+    init()
   }
 
   class Animal(
@@ -86,7 +87,7 @@ object TestSchema {
   class Species(val name: String) extends Entity[Species](Schema.species) {
     def keys: Product1[String] = Tuple1(name)
 
-    lazy val animals = owner(Schema.species2Animals) 
+    lazy val animals = owner(Schema.species2Animals)
 
     def add(animal: Animal): Unit = {
       animals += animal

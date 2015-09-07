@@ -12,10 +12,11 @@ plugins { id 'com.github.maiflai.scalatest' version '0.7' }
 apply plugin: 'java'
 apply plugin: 'scala'
 apply plugin: 'eclipse'
-apply plugin: 'application'
 apply plugin: 'scalaStyle'
 apply plugin: 'maven-publish'
 apply plugin: 'scoverage'
+
+version = '0.1'
 
 repositories {
 	mavenLocal()
@@ -23,15 +24,12 @@ repositories {
 	maven { url 'http://repo.typesafe.com/typesafe/releases' }
 }
 
-version = '0.1'
-mainClassName = '' //ugly, but hey, this is a library after all!
-
 ext {
 	scala_major_version = '2.11'
 	scala_minor_version = '7'
 	scala_version = scala_major_version + '.' + scala_minor_version
 	scala_suffix = '_' + scala_major_version
-	
+
 	scoverage_version = '1.1.0'
 }
 
@@ -47,13 +45,13 @@ dependencies {
 	//Time
 	compile group: 'joda-time', name: 'joda-time', version: '2.5'
 	compile group: 'org.joda', name: 'joda-convert', version: '1.7'
-
+	
 	//Test utils
 	compile group: 'com.h2database', name: 'h2', version: '1.4.182'
 	compile group: 'org.scalatest', name: 'scalatest' + scala_suffix, version: '2.2.5'
 	scoverage group: 'org.scoverage', name: 'scalac-scoverage-plugin' + scala_suffix, version: scoverage_version
 	scoverage group: 'org.scoverage', name: 'scalac-scoverage-runtime' + scala_suffix, version: scoverage_version
-	
+
 	//Testing
 	testRuntime group: 'org.pegdown', name: 'pegdown', version:'1.5.0'
 	testCompile group: 'org.mockito', name: 'mockito-all', version: '1.+'
@@ -72,9 +70,7 @@ tasks.withType(ScalaCompile) {
 test { maxParallelForks = 1 }
 testScoverage { maxParallelForks = 1 }
 
-checkScoverage {
-	minimumRate = 0.62
-}
+checkScoverage { minimumRate = 0.62 }
 
 scalaStyle {
 	configLocation = "/src/test/resources/scalastyle-config.xml"

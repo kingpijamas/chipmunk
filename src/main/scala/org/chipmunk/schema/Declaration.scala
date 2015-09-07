@@ -9,10 +9,10 @@ import org.squeryl.dsl.OneToManyRelation
 import org.squeryl.dsl.{ Relation => SquerylRelation }
 
 object Declaration {
-  type ManyToOneDeclaration[M <: Entity[_], O <: Entity[_]] = 
+  type ManyToOneDeclaration[M <: Entity[_], O <: Entity[_]] =
     OneToManyDeclaration[O, M]
 
-  type ManyToManyDeclaration[L <: Identifiable, R <: Identifiable] = 
+  type ManyToManyDeclaration[L <: Identifiable, R <: Identifiable] =
     Declaration[ManyToManyRelation[L, R, Association2]]
 }
 
@@ -38,7 +38,8 @@ class RegularDeclaration[R <: SquerylRelation[_, _]](rel: => R)
 }
 
 class OneToManyDeclaration[O <: Entity[_], M <: Entity[_]](
-  private[chipmunk] val unsetFk: M => Unit, rel: => OneToManyRelation[O, M])
+  private[chipmunk] val fk: M => ForeignKey[_],
+  rel: => OneToManyRelation[O, M])
     extends Declaration[OneToManyRelation[O, M]] {
   lazy val _rel = rel
 }
