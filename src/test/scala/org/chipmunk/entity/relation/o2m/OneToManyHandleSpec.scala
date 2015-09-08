@@ -1,9 +1,8 @@
-package org.chipmunk.entity.relation.handle
+package org.chipmunk.entity.relation.o2m
 
 import org.chipmunk.DbSpec
 import org.chipmunk.TestSchema.Animal
 import org.chipmunk.TestSchema.Schema.animals
-import org.scalatest.Finders
 import org.squeryl.PrimitiveTypeMode.from
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.where

@@ -1,10 +1,9 @@
-package org.chipmunk.entity.relation
+package org.chipmunk.entity.relation.o2m
 
 import org.chipmunk.TestSchema.Animal
 import org.chipmunk.entity.Identifiable
 import org.chipmunk.test.relation.Query
 import org.mockito.Mockito.verify
-import org.scalatest.Finders
 import org.scalatest.fixture
 import org.scalatest.mock.MockitoSugar
 import org.squeryl.KeyedEntity

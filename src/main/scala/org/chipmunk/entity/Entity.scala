@@ -2,13 +2,13 @@ package org.chipmunk.entity
 
 import scala.collection.mutable
 import org.chipmunk.entity.Identifiable.Id
-import org.chipmunk.entity.relation.ManyToMany
-import org.chipmunk.entity.relation.ManyToOne
-import org.chipmunk.entity.relation.OneToMany
-import org.chipmunk.entity.relation.handle.ManyToManyHandle
-import org.chipmunk.entity.relation.handle.ManyToOneHandle
-import org.chipmunk.entity.relation.handle.OneToManyHandle
-import org.chipmunk.entity.relation.handle.RelationHandle
+import org.chipmunk.entity.relation.m2m.ManyToMany
+import org.chipmunk.entity.relation.m2o.ManyToOne
+import org.chipmunk.entity.relation.o2m.OneToMany
+import org.chipmunk.entity.relation.m2m.ManyToManyHandle
+import org.chipmunk.entity.relation.m2o.ManyToOneHandle
+import org.chipmunk.entity.relation.o2m.OneToManyHandle
+import org.chipmunk.entity.relation.RelationHandle
 import org.chipmunk.schema.Declaration.ManyToManyDeclaration
 import org.chipmunk.schema.Declaration.ManyToOneDeclaration
 import org.chipmunk.schema.OneToManyDeclaration

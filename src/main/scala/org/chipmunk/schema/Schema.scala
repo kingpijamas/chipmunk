@@ -1,7 +1,7 @@
 package org.chipmunk.schema
 
 import org.chipmunk.entity.Entity
-import org.chipmunk.entity.relation.{ Association2 => Assoc2 }
+import org.chipmunk.entity.relation.m2m.{ Association2 => Assoc2 }
 import org.chipmunk.schema.Declaration.ManyToManyDeclaration
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.{ manyToManyRelation => squerylM2M }

@@ -2,7 +2,7 @@ package org.chipmunk.schema
 
 import org.chipmunk.entity.Entity
 import org.chipmunk.entity.Identifiable
-import org.chipmunk.entity.relation.Association2
+import org.chipmunk.entity.relation.m2m.Association2
 import org.chipmunk.util.Validations.assumeState
 import org.squeryl.dsl.ManyToManyRelation
 import org.squeryl.dsl.OneToManyRelation

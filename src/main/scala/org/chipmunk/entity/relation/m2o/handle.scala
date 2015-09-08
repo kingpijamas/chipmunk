@@ -1,10 +1,13 @@
-package org.chipmunk.entity.relation.handle
+package org.chipmunk.entity.relation.m2o
 
 import org.chipmunk.entity.Entity
-import org.chipmunk.entity.relation.ManyToOne
-import org.chipmunk.entity.relation.ManyToOne.SManyToOne
-import org.chipmunk.test.{ relation => mock }
+import org.chipmunk.entity.relation.m2o.ManyToOne.SManyToOne
+import org.chipmunk.entity.relation.PersistentStateLike
+import org.chipmunk.entity.relation.RelationStateLike
+import org.chipmunk.entity.relation.TransientStateLike
+import org.chipmunk.test.{relation => mock}
 import scala.annotation.meta.field
+import org.chipmunk.entity.relation.RelationHandle
 
 object ManyToOneHandle {
   def apply[O <: Entity[_]](
@@ -21,8 +24,8 @@ object ManyToOneHandle {
   }
 }
 
-class ManyToOneHandle[O <: Entity[_]] private[handle] (
-  @(transient @field) private[handle] var state: ManyToOneState[O])
+class ManyToOneHandle[O <: Entity[_]] private[m2o] (
+  @(transient @field) private[m2o] var state: ManyToOneState[O])
     extends RelationHandle[O] with ManyToOne[O] {
 
   def persist(): Unit = { state = state.persist() }

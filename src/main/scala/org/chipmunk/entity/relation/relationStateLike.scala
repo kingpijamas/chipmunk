@@ -1,7 +1,6 @@
-package org.chipmunk.entity.relation.handle
+package org.chipmunk.entity.relation
 
 import org.chipmunk.entity.Entity
-import org.chipmunk.entity.relation.Relation
 import org.squeryl.Query
 
 trait RelationStateLike[O <: Entity[_]] {

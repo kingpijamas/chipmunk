@@ -1,9 +1,11 @@
-package org.chipmunk.entity.relation
+package org.chipmunk.entity.relation.o2m
 
 import org.chipmunk.entity.Entity
 import org.squeryl.dsl.{ OneToMany => SO2M }
 import scala.collection.generic.Growable
 import scala.collection.generic.Shrinkable
+import org.chipmunk.entity.relation.Relation
+import org.squeryl.dsl.{OneToMany => SO2M}
 
 object OneToMany {
   type SOneToMany[M] = SO2M[M]

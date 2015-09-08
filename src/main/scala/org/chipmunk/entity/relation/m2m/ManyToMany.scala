@@ -1,9 +1,11 @@
-package org.chipmunk.entity.relation
+package org.chipmunk.entity.relation.m2m
 
-import org.chipmunk.entity.Entity
-import org.squeryl.dsl.{ ManyToMany => SM2M }
 import scala.collection.generic.Growable
 import scala.collection.generic.Shrinkable
+
+import org.chipmunk.entity.Entity
+import org.chipmunk.entity.relation.Relation
+import org.squeryl.dsl.{ ManyToMany => SM2M }
 
 object ManyToMany {
   type SManyToMany[O <: Entity[_]] = SM2M[O, Association2]

@@ -1,12 +1,12 @@
-package org.chipmunk.entity.relation
+package org.chipmunk.entity.relation.m2m
 
+import org.chipmunk.entity.Identifiable
 import org.chipmunk.entity.Identifiable.Id
 import org.chipmunk.value.Defaultable.DefaultableLong
 import org.chipmunk.value.Defaultable.defaultOf
 import org.squeryl.KeyedEntity
 import org.squeryl.PrimitiveTypeMode.compositeKey
 import org.squeryl.dsl.CompositeKey2
-import org.chipmunk.entity.Identifiable
 
 object Association2 {
   def apply(owner: Identifiable, ownee: Identifiable): Association2 =

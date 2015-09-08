@@ -4,7 +4,7 @@ import scala.collection.mutable
 
 import org.chipmunk.entity.Identifiable
 import org.chipmunk.entity.Identifiable.Id
-import org.chipmunk.entity.relation.Association2
+import org.chipmunk.entity.relation.m2m.Association2
 import org.squeryl.dsl.{ ManyToMany => SManyToMany }
 
 object ManyToMany {

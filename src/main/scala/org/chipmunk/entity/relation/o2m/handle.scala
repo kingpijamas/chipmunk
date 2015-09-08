@@ -1,15 +1,16 @@
-package org.chipmunk.entity.relation.handle
+package org.chipmunk.entity.relation.o2m
 
 import org.chipmunk.entity.Entity
-import org.chipmunk.entity.Identifiable.Id
-import org.chipmunk.entity.relation.OneToMany
-import org.chipmunk.entity.relation.OneToMany.{ SOneToMany => SO2M }
+import org.chipmunk.entity.relation.PersistentStateLike
+import org.chipmunk.entity.relation.RelationStateLike
+import org.chipmunk.entity.relation.TransientStateLike
+import org.chipmunk.entity.relation.o2m.OneToMany.{ SOneToMany => SO2M }
+import org.chipmunk.schema.ForeignKey
 import org.chipmunk.test.{ relation => mock }
 import org.squeryl.PrimitiveTypeMode.__thisDsl
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import scala.annotation.meta.field
-import org.chipmunk.schema.ForeignKey
-import org.chipmunk.test.{ relation => mock }
+import org.chipmunk.entity.relation.RelationHandle
 
 object OneToManyHandle {
   def apply[O <: Entity[O], M <: Entity[M]](
@@ -27,8 +28,8 @@ object OneToManyHandle {
   }
 }
 
-class OneToManyHandle[M <: Entity[_]] private[handle] (
-  @(transient @field) private[handle] var state: OneToManyState[M])
+class OneToManyHandle[M <: Entity[_]] private[o2m] (
+  @(transient @field) private[o2m] var state: OneToManyState[M])
     extends RelationHandle[M] with OneToMany[M] {
 
   def persist(): Unit = { state = state.persist() }
@@ -44,7 +45,7 @@ class OneToManyHandle[M <: Entity[_]] private[handle] (
 sealed trait OneToManyState[M <: Entity[_]] extends RelationStateLike[M] {
   final type SRel = OneToMany.SOneToMany[M]
 
-  private[handle] def -=(other: M): Unit
+  private[o2m] def -=(other: M): Unit
 
   override def persist(): OneToManyState[M]
 }
@@ -56,7 +57,7 @@ private class TransientO2MState[O <: Entity[O], M <: Entity[M]](
   val fkOf: M => ForeignKey[_])
     extends OneToManyState[M] with TransientStateLike[M] {
 
-  private[handle] def -=(other: M): Unit = { rel -= other }
+  private[o2m] def -=(other: M): Unit = { rel -= other }
 
   def persist(): PersistentO2MState[O, M] = {
     val squerylO2M = squerylRelOf(owner)
@@ -76,7 +77,7 @@ private class PersistentO2MState[O <: Entity[O], M <: Entity[M]](
   val fkOf: M => ForeignKey[_])
     extends OneToManyState[M] with PersistentStateLike[M] {
 
-  private[handle] def -=(other: M): Unit = {
+  private[o2m] def -=(other: M): Unit = {
     val othersTable = other.table
     val othersFk = fkOf(other)
 

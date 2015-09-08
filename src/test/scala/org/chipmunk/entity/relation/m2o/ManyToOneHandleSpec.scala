@@ -1,16 +1,15 @@
-package org.chipmunk.entity.relation.handle
+package org.chipmunk.entity.relation.m2o
 
 import org.chipmunk.DbSpec
 import org.chipmunk.TestSchema.Animal
 import org.chipmunk.TestSchema.Schema.animals
-import org.scalatest.Finders
 import org.squeryl.PrimitiveTypeMode.from
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import org.squeryl.PrimitiveTypeMode.where
 import org.squeryl.Table
 
-class ManyToManyHandleSpec extends DbSpec {
-  "A ManyToManyHandle" should "be creatable outside transactions" in { _ => }
+class ManyToOneHandleSpec extends DbSpec {
+  "A ManyToOneHandle" should "be creatable outside transactions" in { _ => }
 
   it should "start in transient state when owning Entity is not persisted" in { f =>
     assert(f.ownersHandle.state.isTransient)
@@ -38,24 +37,10 @@ class ManyToManyHandleSpec extends DbSpec {
 
   it should "be unrelatable outside transactions" in { f =>
     f.ownersHandle += f.anotherE
-    f.ownersHandle -= f.anotherE
-
-    assert(f.ownersHandle forall { _ != f.anotherE })
-  }
-
-  it should "be unrelatable outside transactions (with loops)" in { f =>
-    f.ownersHandle += f.owner
-    f.ownersHandle -= f.owner
-
-    assert(f.ownersHandle forall { _ != f.owner })
-  }
-
-  it should "be clearable outside transactions" in { f =>
-    f.ownersHandle += f.anotherE
     f.ownersHandle.clear()
   }
 
-  it should "be clearable outside transactions (with loops)" in { f =>
+  it should "be unrelatable outside transactions (with loops)" in { f =>
     f.ownersHandle += f.owner
     f.ownersHandle.clear()
   }
@@ -81,10 +66,11 @@ class ManyToManyHandleSpec extends DbSpec {
   }
 
   protected def withFixture(test: OneArgTest) = {
-    val owner = new Animal("Owner")
-    def testHandleOf(o: Animal): ManyToManyHandle[Animal] = {
-      o.friends.asInstanceOf[ManyToManyHandle[Animal]]
+    val owner = new Animal("Child")
+    def testHandleOf(o: Animal): ManyToOneHandle[Animal] = {
+      o.parent.asInstanceOf[ManyToOneHandle[Animal]]
     }
+
     val anotherE = new Animal("A")
 
     val theFixture = FixtureParam(animals, owner, testHandleOf, anotherE)
@@ -92,10 +78,10 @@ class ManyToManyHandleSpec extends DbSpec {
   }
 
   case class FixtureParam(
-    ownersTable: Table[Animal],
-    owner: Animal,
-    testHandleOf: Animal => ManyToManyHandle[Animal],
-    anotherE: Animal) {
+      ownersTable: Table[Animal],
+      owner: Animal,
+      testHandleOf: Animal => ManyToOneHandle[Animal],
+      anotherE: Animal) {
     val ownersHandle = testHandleOf(owner)
   }
 }

@@ -8,8 +8,6 @@ trait Relation[O <: Entity[_]] extends Iterable[O] {
 
   def +=(other: O): this.type
 
-  //  def remove(other: O): Unit
-
   def clear(): Unit
 
   def toSqueryl: SRel

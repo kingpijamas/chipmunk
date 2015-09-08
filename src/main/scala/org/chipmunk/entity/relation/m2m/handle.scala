@@ -1,10 +1,13 @@
-package org.chipmunk.entity.relation.handle
+package org.chipmunk.entity.relation.m2m
 
-import org.chipmunk.entity.Entity
-import org.chipmunk.entity.relation.ManyToMany
-import org.chipmunk.entity.relation.ManyToMany.SManyToMany
-import org.chipmunk.test.{ relation => mock }
 import scala.annotation.meta.field
+import org.chipmunk.entity.Entity
+import org.chipmunk.entity.relation.PersistentStateLike
+import org.chipmunk.entity.relation.RelationStateLike
+import org.chipmunk.entity.relation.TransientStateLike
+import org.chipmunk.entity.relation.m2m.ManyToMany.SManyToMany
+import org.chipmunk.test.{ relation => mock }
+import org.chipmunk.entity.relation.RelationHandle
 
 object ManyToManyHandle {
   def apply[O <: Entity[_]](
@@ -31,9 +34,9 @@ object ManyToManyHandle {
   }
 }
 
-class ManyToManyHandle[O <: Entity[_]] private[handle] (
+class ManyToManyHandle[O <: Entity[_]] private[m2m] (
   @(transient @field) protected val isOwningSide: Boolean,
-  @(transient @field) private[handle] var state: ManyToManyState[O])
+  @(transient @field) private[m2m] var state: ManyToManyState[O])
     extends RelationHandle[O] with ManyToMany[O] {
 
   def persist(): Unit = { state = state.persist() }
@@ -56,8 +59,8 @@ private class TransientM2MState[O <: Entity[_]](
   def persist(): PersistentM2MState[O] = {
     if (isDirty) {
       rel.associationMap foreach { case (other, assoc) =>
-          if (!other.isPersisted) { other.persistBody() }
-          actualRel.associate(other, assoc)
+        if (!other.isPersisted) { other.persistBody() }
+        actualRel.associate(other, assoc)
       }
     }
     new PersistentM2MState[O](isOwningSide, actualRel)

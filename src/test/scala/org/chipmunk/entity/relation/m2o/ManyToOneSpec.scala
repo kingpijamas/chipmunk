@@ -1,14 +1,12 @@
-package org.chipmunk.entity.relation
+package org.chipmunk.entity.relation.m2o
 
 import org.chipmunk.TestSchema.Animal
 import org.chipmunk.entity.Identifiable
 import org.chipmunk.test.relation.Query
 import org.mockito.Mockito.verify
-import org.scalatest.Finders
 import org.scalatest.fixture
 import org.scalatest.mock.MockitoSugar
 import org.squeryl.dsl.{ ManyToOne => SM2O }
-import org.squeryl.KeyedEntity
 
 class ManyToOneSpec extends fixture.FlatSpec with MockitoSugar {
   "A ManyToOne" should "call 'assign' on +=" in { f =>
