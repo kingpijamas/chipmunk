@@ -1,4 +1,4 @@
-package org.chipmunk.entity.relation.mock
+package org.chipmunk.test.relation
 
 import org.chipmunk.entity.Identifiable
 import org.squeryl.dsl.{ ManyToOne => SManyToOne }

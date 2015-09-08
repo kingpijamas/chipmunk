@@ -1,4 +1,4 @@
-package org.chipmunk.entity.relation.mock
+package org.chipmunk.test.relation
 
 import java.sql.ResultSet
 

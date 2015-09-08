@@ -2,7 +2,7 @@ package org.chipmunk.entity.relation
 
 import org.chipmunk.TestSchema.Animal
 import org.chipmunk.entity.Identifiable
-import org.chipmunk.entity.relation.mock.Query
+import org.chipmunk.test.relation.Query
 import org.mockito.Mockito.verify
 import org.scalatest.Finders
 import org.scalatest.fixture

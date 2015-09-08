@@ -1,4 +1,4 @@
-package org.chipmunk.entity.relation.mock
+package org.chipmunk.test.relation
 
 import scala.collection.mutable
 
@@ -10,7 +10,7 @@ object OneToMany {
     new OneToMany[M](mutable.Set() ++= values)
 }
 
-private[relation] class OneToMany[M](
+private[chipmunk] class OneToMany[M](
   values: mutable.Set[M] = mutable.Set.empty[M])
     extends Query[M] with SOneToMany[M] {
 
@@ -29,7 +29,7 @@ private[relation] class OneToMany[M](
     deletionCount
   }
 
-  private[relation] def -=(m: M): this.type = {
+  private[chipmunk] def -=(m: M): this.type = {
     values -= m
     this
   }

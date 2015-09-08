@@ -1,29 +1,26 @@
-package org.chipmunk.entity.relation.mock
+package org.chipmunk.test.relation
 
 import scala.collection.mutable
 
 import org.chipmunk.entity.Identifiable
 import org.chipmunk.entity.Identifiable.Id
 import org.chipmunk.entity.relation.Association2
-import org.chipmunk.entity.relation.mock.ManyToMany.A
 import org.squeryl.dsl.{ ManyToMany => SManyToMany }
 
 object ManyToMany {
-  private type A = Association2
-
   def apply[O <: Identifiable](
     outerId: Id,
     owningSide: Boolean,
-    values: (O, A)*)
-  : SManyToMany[O, A] =
+    values: (O, Association2)*)
+  : SManyToMany[O, Association2] =
     new ManyToMany[O](outerId, owningSide, mutable.Map() ++= values)
 }
 
 private class ManyToMany[O <: Identifiable](
   outerId: Id,
   owningSide: Boolean,
-  values: mutable.Map[O, A])
-    extends Query[O] with SManyToMany[O, A] {
+  values: mutable.Map[O, Association2])
+    extends Query[O] with SManyToMany[O, Association2] {
 
   def iterable: Iterable[O] = values map { _._1 }
 
@@ -40,21 +37,21 @@ private class ManyToMany[O <: Identifiable](
    * have overriden hashCode). If this weren't the case, hashing *will* be a
    * problem when trying to use this class
    */
-  def assign(o: O, a: A): Association2 = {
+  def assign(o: O, a: Association2): Association2 = {
     values += o -> a
     a
   }
 
   def associate(o: O): Association2 = { assign(o) }
 
-  def associate(o: O, a: A): Association2 = { assign(o, a) }
+  def associate(o: O, a: Association2): Association2 = { assign(o, a) }
 
-  def associationMap: Query[(O, A)] = new Query[(O, A)] {
-    def iterable: Iterable[(O, A)] = values
+  def associationMap: Query[(O, Association2)] = new Query[(O, Association2)] {
+    def iterable: Iterable[(O, Association2)] = values
   }
 
-  def associations: Query[A] = new Query[A] {
-    def iterable: Iterable[A] = values map { _._2 }
+  def associations: Query[Association2] = new Query[Association2] {
+    def iterable: Iterable[Association2] = values map { _._2 }
   }
 
   def dissociate(o: O): Boolean = {

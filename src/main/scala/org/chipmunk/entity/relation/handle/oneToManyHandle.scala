@@ -4,11 +4,12 @@ import org.chipmunk.entity.Entity
 import org.chipmunk.entity.Identifiable.Id
 import org.chipmunk.entity.relation.OneToMany
 import org.chipmunk.entity.relation.OneToMany.{ SOneToMany => SO2M }
-import org.chipmunk.entity.relation.mock
+import org.chipmunk.test.{ relation => mock }
 import org.squeryl.PrimitiveTypeMode.__thisDsl
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import scala.annotation.meta.field
 import org.chipmunk.schema.ForeignKey
+import org.chipmunk.test.{ relation => mock }
 
 object OneToManyHandle {
   def apply[O <: Entity[O], M <: Entity[M]](

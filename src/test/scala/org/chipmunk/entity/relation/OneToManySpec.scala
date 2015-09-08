@@ -2,13 +2,13 @@ package org.chipmunk.entity.relation
 
 import org.chipmunk.TestSchema.Animal
 import org.chipmunk.entity.Identifiable
-import org.chipmunk.entity.relation.mock.Query
+import org.chipmunk.test.relation.Query
 import org.mockito.Mockito.verify
 import org.scalatest.Finders
 import org.scalatest.fixture
 import org.scalatest.mock.MockitoSugar
-import org.squeryl.dsl.{ OneToMany => SO2M }
 import org.squeryl.KeyedEntity
+import org.squeryl.dsl.{ OneToMany => SO2M }
 
 class OneToManySpec extends fixture.FlatSpec with MockitoSugar {
   "A OneToMany" should "call 'associate' on +=" in { f =>

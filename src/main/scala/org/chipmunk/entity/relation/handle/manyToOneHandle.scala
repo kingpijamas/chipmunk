@@ -3,7 +3,7 @@ package org.chipmunk.entity.relation.handle
 import org.chipmunk.entity.Entity
 import org.chipmunk.entity.relation.ManyToOne
 import org.chipmunk.entity.relation.ManyToOne.SManyToOne
-import org.chipmunk.entity.relation.mock
+import org.chipmunk.test.{ relation => mock }
 import scala.annotation.meta.field
 
 object ManyToOneHandle {

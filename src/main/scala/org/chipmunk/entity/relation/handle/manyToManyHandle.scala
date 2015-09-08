@@ -1,11 +1,10 @@
 package org.chipmunk.entity.relation.handle
 
-import org.chipmunk.entity.relation.mock
+import org.chipmunk.entity.Entity
 import org.chipmunk.entity.relation.ManyToMany
 import org.chipmunk.entity.relation.ManyToMany.SManyToMany
+import org.chipmunk.test.{ relation => mock }
 import scala.annotation.meta.field
-import org.chipmunk.entity.Entity
-import org.chipmunk.entity.relation.ManyToOne
 
 object ManyToManyHandle {
   def apply[O <: Entity[_]](
