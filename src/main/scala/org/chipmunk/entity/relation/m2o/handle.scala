@@ -5,7 +5,7 @@ import org.chipmunk.entity.relation.m2o.ManyToOne.SManyToOne
 import org.chipmunk.entity.relation.PersistentStateLike
 import org.chipmunk.entity.relation.RelationStateLike
 import org.chipmunk.entity.relation.TransientStateLike
-import org.chipmunk.test.{relation => mock}
+import org.chipmunk.test.{ relation => mock }
 import scala.annotation.meta.field
 import org.chipmunk.entity.relation.RelationHandle
 
@@ -13,8 +13,7 @@ object ManyToOneHandle {
   def apply[O <: Entity[_]](
     owner: Entity[_],
     actualRel: SManyToOne[O],
-    transientRel: SManyToOne[O] = mock.ManyToOne[O]())
-  : ManyToOneHandle[O] = {
+    transientRel: SManyToOne[O] = mock.ManyToOne[O]()): ManyToOneHandle[O] = {
     val state = if (!owner.isPersisted)
       new TransientM2OState(actualRel, transientRel)
     else
@@ -24,13 +23,9 @@ object ManyToOneHandle {
   }
 }
 
-class ManyToOneHandle[O <: Entity[_]] private[m2o] (
-  @(transient @field) private[m2o] var state: ManyToOneState[O])
-    extends RelationHandle[O] with ManyToOne[O] {
-
-  def persist(): Unit = { state = state.persist() }
-
-  def toSqueryl: SManyToOne[O] = state.rel
+class ManyToOneHandle[O <: Entity[_]] private[m2o](state: ManyToOneState[O])
+    extends RelationHandle[O](state) with ManyToOne[O] {
+  def toSqueryl: SRel = state.rel
 }
 
 sealed trait ManyToOneState[O <: Entity[_]] extends RelationStateLike[O] {

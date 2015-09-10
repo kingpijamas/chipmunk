@@ -35,12 +35,9 @@ object ManyToManyHandle {
 }
 
 class ManyToManyHandle[O <: Entity[_]] private[m2m] (
-  @(transient @field) protected val isOwningSide: Boolean,
-  @(transient @field) private[m2m] var state: ManyToManyState[O])
-    extends RelationHandle[O] with ManyToMany[O] {
-
-  def persist(): Unit = { state = state.persist() }
-
+  protected val isOwningSide: Boolean,
+  state: ManyToManyState[O])
+    extends RelationHandle[O](state) with ManyToMany[O] {
   def toSqueryl: SManyToMany[O] = state.rel
 }
 

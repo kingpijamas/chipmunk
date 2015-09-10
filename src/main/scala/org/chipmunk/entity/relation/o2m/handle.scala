@@ -11,6 +11,7 @@ import org.squeryl.PrimitiveTypeMode.__thisDsl
 import org.squeryl.PrimitiveTypeMode.long2ScalarLong
 import scala.annotation.meta.field
 import org.chipmunk.entity.relation.RelationHandle
+import org.squeryl.annotations.Transient
 
 object OneToManyHandle {
   def apply[O <: Entity[O], M <: Entity[M]](
@@ -28,11 +29,8 @@ object OneToManyHandle {
   }
 }
 
-class OneToManyHandle[M <: Entity[_]] private[o2m] (
-  @(transient @field) private[o2m] var state: OneToManyState[M])
-    extends RelationHandle[M] with OneToMany[M] {
-
-  def persist(): Unit = { state = state.persist() }
+class OneToManyHandle[M <: Entity[_]] private[o2m] (state: OneToManyState[M])
+    extends RelationHandle[M](state) with OneToMany[M] {
 
   override def -=(other: M): this.type = {
     state -= other

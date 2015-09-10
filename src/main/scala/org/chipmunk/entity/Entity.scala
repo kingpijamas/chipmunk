@@ -16,12 +16,14 @@ import org.squeryl.PrimitiveTypeMode.inTransaction
 import org.squeryl.Table
 import scala.annotation.meta.field
 import org.chipmunk.value.Defaultable
+import org.squeryl.annotations.Transient
 
 abstract class Entity[T <: Entity[T]](
-  @(transient @field) private[chipmunk] val table: Table[T])
+  @(Transient @field) private[chipmunk] val table: Table[T])
     extends Identifiable with Keyed {
   self: T =>
 
+  @(Transient @field)
   private[entity] val handles = mutable.Buffer[RelationHandle[_]]()
 
   protected def owner[M <: Entity[M]](
