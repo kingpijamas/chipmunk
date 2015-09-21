@@ -4,7 +4,6 @@ import org.chipmunk.TestSchema
 import org.chipmunk.TestSchema.Animal
 import org.chipmunk.TestSchema.Schema
 import org.chipmunk.test.InMemoryDb
-import org.chipmunk.test.Transactions
 import org.scalatest.Finders
 import org.scalatest.Matchers
 import org.scalatest.fixture

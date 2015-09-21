@@ -9,5 +9,4 @@ trait DbSpec
   extends fixture.FlatSpec
   with Matchers
   with TestSchema
-  with Transactions
   with InMemoryDb

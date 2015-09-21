@@ -12,21 +12,25 @@ trait RelationStateLike[O <: Entity[_]] {
 
   def isTransient: Boolean
 
+  def isPersisted: Boolean
+
   def rel: SRel
 }
 
 private[relation] trait TransientStateLike[O <: Entity[_]]
     extends RelationStateLike[O] {
   final def isTransient: Boolean = true
+  final def isPersisted: Boolean = false
 
   final def isDirty: Boolean = !rel.isEmpty
 }
 
 private[relation] trait PersistentStateLike[O <: Entity[_]]
     extends RelationStateLike[O] {
-  final def isDirty: Boolean = false
-
   final def isTransient: Boolean = false
+  final def isPersisted: Boolean = true
+
+  final def isDirty: Boolean = false
 
   final def persist(): this.type = this
 }

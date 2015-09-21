@@ -15,17 +15,17 @@ class ManyToManyHandleSpec extends DbSpec {
     assert(f.ownersHandle.state.isTransient)
   }
 
-  it should "start in persisted state when owning Entity is persisted" in withTransaction { f =>
-    f.owner.persist()
-    val ownersId = f.owner.id
-
-    val ownerFromDb = from(f.ownersTable) { s =>
-      where(s.id === ownersId).select(s)
-    }.head
-    val ownerFromDbsHandle = f.testHandleOf(ownerFromDb)
-
-    assert(!ownerFromDbsHandle.state.isTransient)
-  }
+//  it should "start in persisted state when owning Entity is persisted" in withTransaction { f =>
+//    f.owner.persist()
+//    val ownersId = f.owner.id
+//
+//    val ownerFromDb = from(f.ownersTable) { s =>
+//      where(s.id === ownersId).select(s)
+//    }.head
+//    val ownerFromDbsHandle = f.testHandleOf(ownerFromDb)
+//
+//    assert(!ownerFromDbsHandle.state.isTransient)
+//  }
 
   it should "be relatable outside transactions" in { f =>
     f.ownersHandle += f.anotherE
@@ -59,25 +59,25 @@ class ManyToManyHandleSpec extends DbSpec {
     f.ownersHandle.clear()
   }
 
-  it should "be persistible when related if owner's body is persisted" in withTransaction { f =>
-    f.ownersHandle += f.anotherE
-    f.owner.persistBody()
-    f.ownersHandle.persist()
-  }
-
-  it should "be persistible when related (with loops) if owner's body is persisted" in withTransaction { f =>
-    f.ownersHandle += f.owner
-    f.owner.persistBody()
-    f.ownersHandle.persist()
-  }
-
-  it should "persist its related entities' bodies when persisted if owner's body is persisted" in withTransaction { f =>
-    f.ownersHandle += f.anotherE
-    f.owner.persistBody()
-    f.ownersHandle.persist()
-
-    assert(f.anotherE.isPersisted)
-  }
+//  it should "be persistible when related if owner's body is persisted" in withTransaction { f =>
+//    f.ownersHandle += f.anotherE
+//    f.owner.persistBody()
+//    f.ownersHandle.persist()
+//  }
+//
+//  it should "be persistible when related (with loops) if owner's body is persisted" in withTransaction { f =>
+//    f.ownersHandle += f.owner
+//    f.owner.persistBody()
+//    f.ownersHandle.persist()
+//  }
+//
+//  it should "persist its related entities' bodies when persisted if owner's body is persisted" in withTransaction { f =>
+//    f.ownersHandle += f.anotherE
+//    f.owner.persistBody()
+//    f.ownersHandle.persist()
+//
+//    assert(f.anotherE.isPersisted)
+//  }
 
   protected def withFixture(test: OneArgTest) = {
     val owner = new Animal("Owner")
