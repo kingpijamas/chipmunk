@@ -45,7 +45,7 @@ trait RelationHandleBehaviors {
   def transientHandle[O <: Entity[_], E <: Entity[_]](
     newOwner: => O,
     handleOf: O => RelationHandle[E],
-    newToAdd: => E,
+    toAdd: => E,
     contents: => Seq[E]) {
 
     it should "be transient" in {
@@ -54,14 +54,15 @@ trait RelationHandleBehaviors {
 
     it should "add entities on += outside transactions" in {
       val handle = handleOf(newOwner)
-      val toAdd = newToAdd
-      handle += toAdd
-      assert(handle exists { _ == toAdd })
+      val addend = toAdd
+
+      handle += addend
+      assert(handle exists { _ == addend })
     }
 
     it should "be empty on clear outside transactions" in {
       val handle = handleOf(newOwner)
-      handle.clear()
+      handle.clear() //FIXME it'd be nice to have it have something in it before this
       assert(handle.isEmpty)
     }
 
@@ -89,21 +90,24 @@ trait RelationHandleBehaviors {
   def persistentHandle[O <: Entity[_], E <: Entity[_]](
     newOwner: => O,
     handleOf: O => RelationHandle[E],
-    toAdd: E) {
+    toAdd: => E) {
 
     it should "be persistent" in withTransaction {
       assert(handleOf(newOwner).state.isPersisted)
     }
 
     it should "add entities on += in transactions" in withTransaction {
-      val handle = handleOf(newOwner)
-      handle += toAdd
-      assert(handle exists { _ == toAdd })
+      val owner = newOwner
+      val handle = handleOf(owner)
+      val addend = toAdd
+
+      handle += addend
+      assert(handle exists { _ == addend })
     }
 
     it should "be empty on clear in transactions" in withTransaction {
       val handle = handleOf(newOwner)
-      handle.clear()
+      handle.clear() //FIXME it'd be nice to have it have something in it before this
       assert(handle.isEmpty)
     }
 

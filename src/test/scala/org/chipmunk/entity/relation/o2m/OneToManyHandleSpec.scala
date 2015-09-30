@@ -33,15 +33,15 @@ class OneToManyHandleSpec
     owner.children.asInstanceOf[OneToManyHandle[Animal]]
   }
 
-  private[this] def nonPersistedOwner = testAnimal("owner")
+  private[this] def nonPersistedOwner = testAnimal("parent")
 
   private[this] def persistedOwner = {
-    val owner = testAnimal("owner")
+    val owner = nonPersistedOwner
     owner.persist()
     owner
   }
 
-  private[this] def toAdd = testAnimal("toAdd")
+  private[this] def toAdd = testAnimal("child")
 
   private[this] def testAnimal(name: String): Animal =
     new Animal(name + "-" + System.currentTimeMillis)
