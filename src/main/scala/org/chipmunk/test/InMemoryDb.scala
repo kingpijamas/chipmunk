@@ -1,11 +1,13 @@
 package org.chipmunk.test
 
-import org.chipmunk.util.Configurator
 import org.chipmunk.schema.Schema
+import org.chipmunk.test.InMemoryDb.Adapter
+import org.chipmunk.test.InMemoryDb.DriverClass
+import org.chipmunk.util.Configurator
+import org.h2.Driver
 import org.scalatest.Suite
-import org.squeryl.adapters.H2Adapter
-import org.chipmunk.test.InMemoryDb._
 import org.squeryl.PrimitiveTypeMode.inTransaction
+import org.squeryl.adapters.H2Adapter
 
 object InMemoryDb {
   private val DriverClass = classOf[org.h2.Driver]

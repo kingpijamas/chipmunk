@@ -12,12 +12,5 @@ object ManyToOne {
 trait ManyToOne[O <: Entity[_]] extends Relation[O] {
   final type SRel = SManyToOne[O]
 
-  def +=(other: O): this.type = {
-    toSqueryl.assign(other)
-    this
-  }
-
-  def clear(): Unit = { toSqueryl.delete }
-
   protected final def isOwningSide: Boolean = false
 }

@@ -35,6 +35,13 @@ class ManyToOneSpec extends fixture.FlatSpec with MockitoSugar {
 
   class TestManyToOne extends ManyToOne[Animal] {
     val toSqueryl: SRel = mock[TestSM2O[Animal]]
+
+    def +=(other: Animal): this.type = {
+      toSqueryl.assign(other)
+      this
+    }
+
+    def clear(): Unit = { toSqueryl.delete }
   }
 
   class TestSM2O[O <: Identifiable] extends Query[O] with SM2O[O] {

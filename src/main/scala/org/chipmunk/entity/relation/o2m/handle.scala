@@ -16,14 +16,14 @@ import org.squeryl.annotations.Transient
 object OneToManyHandle {
   def apply[O <: Entity[O], M <: Entity[M]](
     owner: O,
-    squerylRelOfOf: O => SO2M[M],
+    squerylRelOf: O => SO2M[M],
     fkOf: M => ForeignKey[_],
     transientRel: mock.OneToMany[M] = new mock.OneToMany[M]())
   : OneToManyHandle[M] = {
     val state = if (!owner.isPersisted)
-      new TransientO2MState(owner, transientRel, squerylRelOfOf, fkOf)
+      new TransientO2MState(owner, transientRel, squerylRelOf, fkOf)
     else
-      new PersistentO2MState(owner, squerylRelOfOf(owner), fkOf)
+      new PersistentO2MState(owner, squerylRelOf(owner), fkOf)
 
     new OneToManyHandle(state)
   }

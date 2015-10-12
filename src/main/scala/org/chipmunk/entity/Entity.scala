@@ -39,10 +39,9 @@ abstract class Entity[T <: Entity[T]](
     subscribe(handle)
   }
 
-  protected def ownee[O <: Entity[_]](
+  protected def ownee[O <: Entity[O]](
     decl: => ManyToOneDeclaration[T, O]): ManyToOne[O] = {
-    val squerylRel = decl.value.right(this)
-    val handle = ManyToOneHandle(this, squerylRel)
+    val handle = ManyToOneHandle(this, decl.value.right)
     subscribe(handle)
   }
 

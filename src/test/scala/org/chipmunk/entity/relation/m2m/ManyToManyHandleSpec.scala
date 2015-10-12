@@ -12,6 +12,7 @@ import org.chipmunk.entity.relation.RelationHandleBehaviors
 import org.scalatest.FlatSpec
 import org.chipmunk.test.InMemoryDb
 import org.chipmunk.TestSchema
+import org.chipmunk.entity.Entity
 
 class ManyToManyHandleSpec
     extends FlatSpec
@@ -28,24 +29,20 @@ class ManyToManyHandleSpec
   "A ManyToManyHandle (of a persisted entity)" should behave like
     handleWithPersistedOwner(persistedOwner, handleOf)
 
-  it should behave like persistentHandle(persistedOwner, handleOf, persistedToAdd)
+  it should behave like persistentOwnerHandle(persistedOwner, handleOf, persistedToAdd)
 
-  private[this] def handleOf(owner: Animal): ManyToManyHandle[Animal] = {
+  private[this] def handleOf(owner: Animal): ManyToManyHandle[Animal] =
     owner.friends.asInstanceOf[ManyToManyHandle[Animal]]
-  }
 
   private[this] def nonPersistedOwner = testAnimal("A")
-  private[this] def persistedOwner = {
-    val owner = nonPersistedOwner
-    owner.persist()
-    owner
-  }
+  private[this] def persistedOwner = persist(nonPersistedOwner)
 
   private[this] def toAdd = testAnimal("B")
-  private[this] def persistedToAdd = {
-    val friend = toAdd
-    friend.persist()
-    friend
+  private[this] def persistedToAdd = persist(toAdd)
+
+  private[this] def persist[E <: Entity[_]](e: E): E = {
+    e.persist()
+    e
   }
 
   private[this] def testAnimal(name: String): Animal =

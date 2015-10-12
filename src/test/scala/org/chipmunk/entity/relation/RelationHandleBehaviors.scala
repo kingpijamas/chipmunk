@@ -1,19 +1,19 @@
 package org.chipmunk.entity.relation
 
-import org.chipmunk.DbSpec
-import org.chipmunk.entity.Entity
-import org.scalatest.FlatSpec
-import org.chipmunk.test.{ relation => test }
-import org.chipmunk.test.InMemoryDb
 import org.chipmunk.TestSchema
-import org.scalatest.Suite
+import org.chipmunk.entity.Entity
+import org.chipmunk.test.InMemoryDb
+import org.chipmunk.test.{ relation => test }
+import org.chipmunk.util.Configurator
+import org.scalatest.FlatSpec
+import org.squeryl.PrimitiveTypeMode.transaction
 
 trait RelationHandleBehaviors {
   self: FlatSpec with TestSchema with InMemoryDb =>
 
   def handleWithNonPersistedOwner[O <: Entity[_], E <: Entity[_]](
     newOwner: => O,
-    handleOf: O => RelationHandle[E]) {
+    handleOf: O => RelationHandle[E]): Unit = {
 
     it should "have a transient owner" in {
       assert(!newOwner.isPersisted)
@@ -30,7 +30,7 @@ trait RelationHandleBehaviors {
 
   def handleWithPersistedOwner[O <: Entity[_], E <: Entity[_]](
     newOwner: => O,
-    handleOf: O => RelationHandle[E]) {
+    handleOf: O => RelationHandle[E]): Unit = {
 
     it should "have a persistent owner" in withTransaction {
       assert(newOwner.isPersisted)
@@ -46,7 +46,7 @@ trait RelationHandleBehaviors {
     newOwner: => O,
     handleOf: O => RelationHandle[E],
     toAdd: => E,
-    contents: => Seq[E]) {
+    contents: => Seq[E]): Unit = {
 
     it should "be transient" in {
       assert(handleOf(newOwner).state.isTransient)
@@ -89,20 +89,10 @@ trait RelationHandleBehaviors {
 
   def persistentHandle[O <: Entity[_], E <: Entity[_]](
     newOwner: => O,
-    handleOf: O => RelationHandle[E],
-    toAdd: => E) {
+    handleOf: O => RelationHandle[E]): Unit = {
 
     it should "be persistent" in withTransaction {
       assert(handleOf(newOwner).state.isPersisted)
-    }
-
-    it should "add entities on += in transactions" in withTransaction {
-      val owner = newOwner
-      val handle = handleOf(owner)
-      val addend = toAdd
-
-      handle += addend
-      assert(handle exists { _ == addend })
     }
 
     it should "be empty on clear in transactions" in withTransaction {
@@ -113,6 +103,53 @@ trait RelationHandleBehaviors {
 
     it should "not return a test relation on toSqueryl" in withDb {
       assert(!handleOf(newOwner).toSqueryl.isInstanceOf[test.Query[_]])
+    }
+  }
+
+  def persistentOwnerHandle[O <: Entity[_], E <: Entity[_]](
+    newOwner: => O,
+    handleOf: O => RelationHandle[E],
+    toAdd: => E): Unit = {
+
+    it should behave like persistentHandle(newOwner, handleOf)
+
+    it should "add entities on += in transactions" in withTransaction {
+      val owner = newOwner
+      val handle = handleOf(owner)
+      val addend = toAdd
+
+      handle += addend
+      assert(handle exists { _ == addend })
+    }
+  }
+
+  def persistentOwneeHandle[O <: Entity[_], E <: Entity[_]](
+    newOwner: => O,
+    owneeHandleOf: O => RelationHandle[E],
+    toAdd: => E,
+    counterpartHandleOf: E => RelationHandle[O]): Unit = {
+
+    it should behave like persistentHandle(newOwner, owneeHandleOf)
+
+    it should "add entities on += in transactions" in withDb {
+      val owner = newOwner
+      val handle = owneeHandleOf(owner)
+
+      val addend = toAdd
+      val counterpartHandle = counterpartHandleOf(addend)
+
+      transaction {
+        counterpartHandle += owner
+        handle += addend
+      }
+
+      transaction {
+        /**
+         * this check needs to be done in a separate transaction because the
+         * isolation status is READ COMMITTED
+         */
+        assert(handle exists { _ == addend })
+      }
     }
   }
 }

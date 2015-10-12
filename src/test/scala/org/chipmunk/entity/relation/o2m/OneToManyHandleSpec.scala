@@ -11,6 +11,7 @@ import org.chipmunk.entity.relation.RelationHandleBehaviors
 import org.scalatest.FlatSpec
 import org.chipmunk.test.InMemoryDb
 import org.chipmunk.TestSchema
+import org.chipmunk.entity.Entity
 
 class OneToManyHandleSpec
     extends FlatSpec
@@ -27,21 +28,20 @@ class OneToManyHandleSpec
   "A OneToManyHandle (of a persisted entity)" should behave like
     handleWithPersistedOwner(persistedOwner, handleOf)
 
-  it should behave like persistentHandle(persistedOwner, handleOf, toAdd)
+  it should behave like persistentOwnerHandle(persistedOwner, handleOf, toAdd)
 
-  private[this] def handleOf(owner: Animal): OneToManyHandle[Animal] = {
+  private[this] def handleOf(owner: Animal): OneToManyHandle[Animal] =
     owner.children.asInstanceOf[OneToManyHandle[Animal]]
-  }
 
   private[this] def nonPersistedOwner = testAnimal("parent")
-
-  private[this] def persistedOwner = {
-    val owner = nonPersistedOwner
-    owner.persist()
-    owner
-  }
+  private[this] def persistedOwner = persist(nonPersistedOwner)
 
   private[this] def toAdd = testAnimal("child")
+
+  private[this] def persist[E <: Entity[_]](e: E): E = {
+    e.persist()
+    e
+  }
 
   private[this] def testAnimal(name: String): Animal =
     new Animal(name + "-" + System.currentTimeMillis)
